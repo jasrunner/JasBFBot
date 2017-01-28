@@ -42,8 +42,8 @@ def getEventTypes():
 
     try:
         eventTypeResults = eventTypeLoads['result']
-        print('id='+str(eventTypeLoads['id']))
-        print('jsonrpc='+str(eventTypeLoads['jsonrpc']))
+      #  print('id='+str(eventTypeLoads['id']))
+       # print('jsonrpc='+str(eventTypeLoads['jsonrpc']))
         return eventTypeResults
     except:
         print ('Exception from API-NG' + str(eventTypeLoads['error']))
@@ -56,13 +56,11 @@ def listEvents( queryText ) :
 	list_events_req += queryText
 	list_events_req += '", "marketTypeCodes": ["MATCH_ODDS"], "inPlayOnly":true}}, "id": 1} '
 	
-	print ('Calling listEvents to get list of event ids')
-	print(list_events_req)
+	#print ('Calling listEvents to get list of event ids')
+	#print(list_events_req)
 	listEventsResponse = callAping(list_events_req)
 	listEventsLoads = json.loads(listEventsResponse)
-	print('___________________')
 
-	print(listEventsLoads)
 	return listEventsLoads['result']
     
 
