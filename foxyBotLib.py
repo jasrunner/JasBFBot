@@ -68,6 +68,10 @@ def listEvents( queryText ) :
 def listMarketCatalogue( eventList, numberEvents ) :
 	
 	max = min( foxyGlobals.requestLimit, numberEvents )
+	
+	if max == 0 :
+		print('No events available, returning')
+		return 0
 	list_market_cat_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listMarketCatalogue", "params": {"filter":{"eventIds":['
 	list_market_cat_req += eventList
 	list_market_cat_req += '], "marketTypeCodes": ["MATCH_ODDS"]},  "maxResults" : '
@@ -80,6 +84,7 @@ def listMarketCatalogue( eventList, numberEvents ) :
 	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')
+	print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 	

@@ -46,6 +46,9 @@ def getInplayMarketVols( setOfEvents ):
 		
 	marketCat = foxyBotLib.listMarketCatalogue( eventString, numberEvents )
 	
+	if marketCat == 0:
+		return 0
+	
 	
 	myDict = {}
 	for market in marketCat:

@@ -90,6 +90,9 @@ for id in dictOfEvents :
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
 dictOfMarketObjects = marketAccess.getInplayMarketVols( setOfEvents )
+if dictOfMarketObjects == 0 :
+	print('Exiting')
+	sys.exit(0)
 marketIdCount = str(len(dictOfMarketObjects))
 
 '''
