@@ -63,6 +63,10 @@ foxyGlobals.headers = {'X-Application': appKey, 'X-Authentication': sessionToken
 
 
 #--------------------------------------------------------
+foxyBotLib.getAccountDetails()
+foxyBotLib.getAccountFunds()
+#--------------------------------------------------------
+
 
 searchString = input ('Enter search term, s=soccer, t=tennis, c=cricket' )
 if  searchString == 's'  :

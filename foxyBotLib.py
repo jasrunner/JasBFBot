@@ -11,9 +11,11 @@ import foxyGlobals
 #url = "https://api.betfair.com/exchange/betting/json-rpc/v1"
 
 #--------------------------------------------------------
-def callAping(jsonrpc_req):
+def callAping(jsonrpc_req, url):
     try:
-        req = urllib.request.Request(foxyGlobals.url, jsonrpc_req.encode('utf-8'), foxyGlobals.headers)
+       # print(jsonrpc_req)
+       # print(url)
+        req = urllib.request.Request(url, jsonrpc_req.encode('utf-8'), foxyGlobals.headers)
         response = urllib.request.urlopen(req)
         jsonResponse = response.read()
         return jsonResponse.decode('utf-8')
@@ -27,11 +29,34 @@ def callAping(jsonrpc_req):
 
 #--------------------------------------------------------
 
+def getAccountDetails():
+    request = '{"jsonrpc": "2.0", "method": "AccountAPING/v1.0/getAccountDetails", "params":{"locale":"en"},  "id": 1} '
+    
+    print ('Calling getAccountDetails')
+    response = callAping(request,foxyGlobals.urlAccounts)
+    responseLoads = json.loads(response)
+    print(responseLoads)
+    
+    
+    
+#--------------------------------------------------------
+def getAccountFunds():
+    request = '{"jsonrpc": "2.0", "method": "AccountAPING/v1.0/getAccountFunds", "params":{"locale":"en"},  "id": 1} '
+    
+    print ('Calling getAccountFunds')
+    response = callAping(request,foxyGlobals.urlAccounts)
+    responseLoads = json.loads(response)
+    print(responseLoads)
+    
+    
+    
+#--------------------------------------------------------
+
 def getEventTypes():
     event_type_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listEventTypes", "params": {"filter":{"textQuery":"Tennis","inPlayOnly":true}}, "id": 1} '
     
     print ('Calling listEventTypes to get event Type ID')
-    eventTypesResponse = callAping(event_type_req)
+    eventTypesResponse = callAping(event_type_req, foxyGlobals.urlBetting)
     eventTypeLoads = json.loads(eventTypesResponse)
 
 
@@ -58,7 +83,7 @@ def listEvents( queryText ) :
 	
 	#print ('Calling listEvents to get list of event ids')
 	#print(list_events_req)
-	listEventsResponse = callAping(list_events_req)
+	listEventsResponse = callAping(list_events_req, foxyGlobals.urlBetting)
 	listEventsLoads = json.loads(listEventsResponse)
 
 	return listEventsLoads['result']
@@ -80,7 +105,7 @@ def listMarketCatalogue( eventList, numberEvents ) :
 
 	#print ('Calling listMarketCatalogue')
 	
-	listMarketResponse = callAping(list_market_cat_req)
+	listMarketResponse = callAping(list_market_cat_req,foxyGlobals.urlBetting)
 	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')
@@ -98,7 +123,7 @@ def listMarketCatalogueInPlay( queryText ) :
 	
 	#print ('Calling listMarketCatalogueInPlay')
 	
-	listMarketResponse = callAping(list_market_cat_req)
+	listMarketResponse = callAping(list_market_cat_req, foxyGlobals.urlB)
 	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	
@@ -119,7 +144,7 @@ def listMarketBook( marketId ) :
 	
 	
 	#print ('Calling listMarketBook to get price information')
-	listMarketResponse = callAping(list_market_book_req)
+	listMarketResponse = callAping(list_market_book_req, foxyGlobals.urlBetting)
 	listMarketLoads = json.loads(listMarketResponse)
 #	print('___________________')
 	#print(listMarketLoads)
@@ -134,7 +159,7 @@ def getEventNameFromMarketId( marketId ) :
 	#print(event_info_req)
 
 
-	response = callAping(event_info_req)
+	response = callAping(event_info_req, foxyGlobals.urlBetting)
 	loads = json.loads(response)
 	
 	res = loads['result'] 
