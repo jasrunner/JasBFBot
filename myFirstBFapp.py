@@ -28,6 +28,7 @@ import foxyBotLib
 import foxyGlobals
 import marketClass
 import marketAccess
+import accountAccess
 
 '''
 =======================================================================
@@ -63,8 +64,9 @@ foxyGlobals.headers = {'X-Application': appKey, 'X-Authentication': sessionToken
 
 
 #--------------------------------------------------------
-foxyBotLib.getAccountDetails()
-foxyBotLib.getAccountFunds()
+#foxyBotLib.getAccountDetails()
+#foxyBotLib.getAccountFunds()
+accountAccess.getCurrentAccountDetails()
 #--------------------------------------------------------
 
 

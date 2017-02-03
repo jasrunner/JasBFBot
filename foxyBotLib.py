@@ -28,6 +28,8 @@ def callAping(jsonrpc_req, url):
         exit()
 
 #--------------------------------------------------------
+# Accounts
+#--------------------------------------------------------
 
 def getAccountDetails():
     request = '{"jsonrpc": "2.0", "method": "AccountAPING/v1.0/getAccountDetails", "params":{"locale":"en"},  "id": 1} '
@@ -35,8 +37,8 @@ def getAccountDetails():
     print ('Calling getAccountDetails')
     response = callAping(request,foxyGlobals.urlAccounts)
     responseLoads = json.loads(response)
-    print(responseLoads)
-    
+    #print(responseLoads)
+    return (responseLoads['result'])
     
     
 #--------------------------------------------------------
@@ -46,10 +48,12 @@ def getAccountFunds():
     print ('Calling getAccountFunds')
     response = callAping(request,foxyGlobals.urlAccounts)
     responseLoads = json.loads(response)
-    print(responseLoads)
+    #print(responseLoads)
+    return (responseLoads['result'])
     
     
-    
+#--------------------------------------------------------  
+# Sports
 #--------------------------------------------------------
 
 def getEventTypes():
