@@ -1,4 +1,5 @@
-url = "https://api.betfair.com/exchange/betting/json-rpc/v1"
+urlBetting  = "https://api.betfair.com/exchange/betting/json-rpc/v1"
+urlAccounts = "https://api.betfair.com/exchange/account/json-rpc/v1"
 headers = ""
 
 requestLimit = 1000

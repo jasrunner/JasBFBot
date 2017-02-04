@@ -8,30 +8,75 @@ import ssl
 
 import foxyGlobals
 
-#url = "https://api.betfair.com/exchange/betting/json-rpc/v1"
+account = "Account"
+sports  = "Sports"
 
 #--------------------------------------------------------
-def callAping(jsonrpc_req):
-    try:
-        req = urllib.request.Request(foxyGlobals.url, jsonrpc_req.encode('utf-8'), foxyGlobals.headers)
-        response = urllib.request.urlopen(req)
-        jsonResponse = response.read()
-        return jsonResponse.decode('utf-8')
-    except urllib.error.URLError as e:
-        print (e.reason) 
-        print ('Oops no service available at ' + str(foxyGlobals.url))
-        exit()
-    except urllib.error.HTTPError:
-        print ('Oops not a valid operation from the service ' + str(foxyGlobals.url))
-        exit()
+def callAping( requestType, query, params ):
 
+		url = ""
+
+		if ( requestType == account ) :
+			url = foxyGlobals.urlAccounts
+		elif (requestType == sports ) :
+			url = foxyGlobals.urlBetting
+		else:
+			print( "Unknown requestType = " + requestType )
+			exit() 
+
+		try:
+				
+			part1 = '{"jsonrpc": "2.0", "method": "' + requestType
+			part2 = 'APING/v1.0/' + query
+			part3 = '", "params":{' + params + '},  "id": 1} '
+			jsonrpc_req = part1 + part2 + part3
+				
+			#print( jsonrpc_req )
+			req = urllib.request.Request(url, jsonrpc_req.encode('utf-8'), foxyGlobals.headers)
+			response = urllib.request.urlopen(req)
+			jsonResponse = response.read()
+			return jsonResponse.decode('utf-8')
+		except urllib.error.URLError as e:
+			print (e.reason) 
+			print ('Oops no service available at ' + str(foxyGlobals.url))
+			exit()
+		except urllib.error.HTTPError:
+			print ('Oops not a valid operation from the service ' + str(foxyGlobals.url))
+			exit()
+
+#--------------------------------------------------------
+# Accounts
+#--------------------------------------------------------
+
+def getAccountDetails():
+    params = '"locale":"en" '
+    
+    print ('Calling getAccountDetails')
+    response = callAping(account, "getAccountDetails", params)
+    responseLoads = json.loads(response)
+    #print(responseLoads)
+    return (responseLoads['result'])
+    
+    
+#--------------------------------------------------------
+def getAccountFunds():
+        
+    print ('Calling getAccountFunds')
+    response = callAping(account, "getAccountFunds", "")
+    responseLoads = json.loads(response)
+    #print(responseLoads)
+    return (responseLoads['result'])
+    
+    
+#--------------------------------------------------------  
+# Sports
 #--------------------------------------------------------
 
 def getEventTypes():
-    event_type_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listEventTypes", "params": {"filter":{"textQuery":"Tennis","inPlayOnly":true}}, "id": 1} '
+    params = '"filter":{"textQuery":"Tennis","inPlayOnly":true}'
     
     print ('Calling listEventTypes to get event Type ID')
-    eventTypesResponse = callAping(event_type_req)
+    eventTypesResponse = callAping(sports, "listEventTypes", params )
     eventTypeLoads = json.loads(eventTypesResponse)
 
 
@@ -42,8 +87,8 @@ def getEventTypes():
 
     try:
         eventTypeResults = eventTypeLoads['result']
-        print('id='+str(eventTypeLoads['id']))
-        print('jsonrpc='+str(eventTypeLoads['jsonrpc']))
+      #  print('id='+str(eventTypeLoads['id']))
+       # print('jsonrpc='+str(eventTypeLoads['jsonrpc']))
         return eventTypeResults
     except:
         print ('Exception from API-NG' + str(eventTypeLoads['error']))
@@ -52,17 +97,13 @@ def getEventTypes():
 
 #--------------------------------------------------------
 def listEvents( queryText ) :
-	list_events_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listEvents", "params": {"filter":{"textQuery":"'
-	list_events_req += queryText
-	list_events_req += '", "marketTypeCodes": ["MATCH_ODDS"], "inPlayOnly":true}}, "id": 1} '
+	params = '"filter":{"textQuery":"' + queryText + '", "marketTypeCodes": ["MATCH_ODDS"], "inPlayOnly":true}'
 	
-	print ('Calling listEvents to get list of event ids')
-	print(list_events_req)
-	listEventsResponse = callAping(list_events_req)
+	#print ('Calling listEvents to get list of event ids')
+	#print(list_events_req)
+	listEventsResponse = callAping( sports, "listEvents", params )
 	listEventsLoads = json.loads(listEventsResponse)
-	print('___________________')
 
-	print(listEventsLoads)
 	return listEventsLoads['result']
     
 
@@ -70,18 +111,21 @@ def listEvents( queryText ) :
 def listMarketCatalogue( eventList, numberEvents ) :
 	
 	max = min( foxyGlobals.requestLimit, numberEvents )
-	list_market_cat_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listMarketCatalogue", "params": {"filter":{"eventIds":['
-	list_market_cat_req += eventList
-	list_market_cat_req += '], "marketTypeCodes": ["MATCH_ODDS"]},  "maxResults" : '
-	list_market_cat_req += str(max)
-	list_market_cat_req += '}, "id": 1} '
+	
+	if max == 0 :
+		print('No events available, returning')
+		return 0
+	params = '"filter":{"eventIds":[' + eventList
+	params += '], "marketTypeCodes": ["MATCH_ODDS"]},  "maxResults" : '
+	params += str(max) + '}'
 
 	#print ('Calling listMarketCatalogue')
 	
-	listMarketResponse = callAping(list_market_cat_req)
+	listMarketResponse = callAping( sports, "listMarketCatalogue", params )
 	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')
+	print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 	
@@ -89,13 +133,11 @@ def listMarketCatalogue( eventList, numberEvents ) :
 #--------------------------------------------------------
 def listMarketCatalogueInPlay( queryText ) :
 	
-	list_market_cat_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listMarketCatalogue", "params": {"filter":{"textQuery":"'
-	list_market_cat_req += queryText
-	list_market_cat_req += '","inPlayOnly":true} , "maxResults" : 2 }, "id" : 1} '
+	params = '"filter":{"textQuery":"' + queryText + '","inPlayOnly":true} , "maxResults" : 2 } '
 	
 	#print ('Calling listMarketCatalogueInPlay')
 	
-	listMarketResponse = callAping(list_market_cat_req)
+	listMarketResponse = callAping( sports, "listMarketCatalogue", params )
 	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	
@@ -105,9 +147,7 @@ def listMarketCatalogueInPlay( queryText ) :
 #--------------------------------------------------------
 def listMarketBook( marketId ) :
 	
-	list_market_book_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listMarketBook", "params": { "marketIds":[ '
-	list_market_book_req += marketId
-	list_market_book_req += '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }}, "id": 1} '
+	params = ' "marketIds":[ ' + marketId + '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'
 	#print( list_market_book_req)
 	
 	
@@ -116,7 +156,7 @@ def listMarketBook( marketId ) :
 	
 	
 	#print ('Calling listMarketBook to get price information')
-	listMarketResponse = callAping(list_market_book_req)
+	listMarketResponse = callAping( sports, "listMarketBook", params )
 	listMarketLoads = json.loads(listMarketResponse)
 #	print('___________________')
 	#print(listMarketLoads)
@@ -124,14 +164,12 @@ def listMarketBook( marketId ) :
 	
 #--------------------------------------------------------
 def getEventNameFromMarketId( marketId ) :
-	event_info_req = '{"jsonrpc": "2.0", "method": "SportsAPING/v1.0/listEvents", "params": {"filter":{"marketIds":["'
-	event_info_req += marketId
-	event_info_req += '"]} }, "id": 1} '
+	params = '"filter":{"marketIds":["' + marketId + '"]} '
 	
 	#print(event_info_req)
 
 
-	response = callAping(event_info_req)
+	response = callAping( sports, "listEvents", params )
 	loads = json.loads(response)
 	
 	res = loads['result'] 

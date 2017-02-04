@@ -24,7 +24,9 @@ def getSessionId( ):
 def getDelayedKey( ) :
 	return ( userCredentials.delayedAppKey ) 
 
+print('\n___________________')
 
 print( 'Session ID:    ' + getSessionId( ) )
 print( 'DelayedAppKey: ' + getDelayedKey( ) )
 
+print('___________________')
