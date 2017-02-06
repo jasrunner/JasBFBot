@@ -95,20 +95,13 @@ for id in dictOfEvents :
 
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
-dictOfMarketObjects = marketAccess.getInplayMarketVols( setOfEvents )
+dictOfMarketObjects = marketAccess.getInplayMarketVols( setOfEvents, foxyGlobals.matchOdds )
 if dictOfMarketObjects == 0 :
 	print('Exiting')
 	sys.exit(0)
 marketIdCount = str(len(dictOfMarketObjects))
 
-'''
-marketList = [] 
-for id in dictOfMarketIds :
-	name = foxyBotLib.getEventNameFromMarketId(id)
-	print( '\t' + str( id ) + " :\t" + str(dictOfMarketIds[id] )  + " :\t" + name )
-	newObject =  marketClass.Market( id, name )
-	newObject.volume = dictOfMarketIds[ id ]
-	marketList.append( newObject  )'''
+
 	
 print('___________________')	
 print( 'List of ' + marketIdCount + ' markets above min volume size, ordered by volume')
@@ -154,5 +147,22 @@ while not getPrices(sortedDictOfMarketObjects[i].id) :
 '''
 
 
+#--------------------------------------------------------
+
+'''
+	investigate the correct score party(soccer only)
+	lets use the same set of event id's found earlier,
+	this is filtered for market (soccer) and in-play
+'''
+dictOfCorrectScore = marketAccess.getInplayMarketVols( setOfEvents, foxyGlobals.correctScore )
+if dictOfCorrectScore == 0 :
+	print('Exiting')
+	sys.exit(0)
+correctScoreCount = str(len(dictOfCorrectScore))
+
+'''
+thiughts: is different as will get larger range of "runners"
+and want to determine what current score is based in the odds returned
+'''
 
 

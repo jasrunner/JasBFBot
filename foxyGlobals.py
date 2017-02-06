@@ -7,5 +7,8 @@ requestLimit = 1000
 # The minumum traded volume to gauge the size of the market
 minVolume = 10000
 
+matchOdds 		= "MATCH_ODDS"
+correctScore 	= "CORRECT_SCORE"
+
 
 

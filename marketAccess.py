@@ -32,7 +32,7 @@ Task 2:
 	i want to see the name, and amount matched.
 	order by volume traded (is this the same as matched amount?)
 '''
-def getInplayMarketVols( setOfEvents ):
+def getInplayMarketVols( setOfEvents, marketType ):
 	
 	#turn eventList into proper formatted list
 	numberEvents = len(setOfEvents)
@@ -44,7 +44,7 @@ def getInplayMarketVols( setOfEvents ):
 		if eventId  != setOfEvents[numberEvents-1] :
 			eventString += ','
 		
-	marketCat = foxyBotLib.listMarketCatalogue( eventString, numberEvents )
+	marketCat = foxyBotLib.listMarketCatalogue( eventString, numberEvents, marketType )
 	
 	if marketCat == 0:
 		return 0
