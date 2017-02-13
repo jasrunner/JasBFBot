@@ -127,7 +127,7 @@ def listMarketCatalogue( eventList, numberEvents, marketType ) :
 	print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')
-	#print(listMarketLoads)
+	print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 	
