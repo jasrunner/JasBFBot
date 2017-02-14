@@ -116,18 +116,16 @@ def listMarketCatalogue( eventList, numberEvents, marketType ) :
 		print('No events available, returning')
 		return 0
 	params = '"filter":{"eventIds":[' + eventList
-	#params += '], "marketTypeCodes": ["MATCH_ODDS"]},  "maxResults" : '
 	params += '], "marketTypeCodes": ["' + marketType
-	#CORRECT_SCORE
 	params += '"]},  "maxResults" : '  + str(max) + '}'
 
 	#print ('Calling listMarketCatalogue')
 	
 	listMarketResponse = callAping( sports, "listMarketCatalogue", params )
-	print( listMarketResponse )
+	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')
-	print(listMarketLoads)
+	#print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 	

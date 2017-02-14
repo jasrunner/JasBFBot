@@ -90,8 +90,6 @@ def getPrices ( marketId ):
 	#as result 1
 	ret1 = price[0]
 	
-#	print('jas: ' +  str(ret1) )
-
 		
 	numberOfRunners = ret1['numberOfRunners']
 	print('number of runners = ' + str(numberOfRunners))
@@ -101,31 +99,7 @@ def getPrices ( marketId ):
 		return getBestOdds( runner )
 		#print(runner['ex'])
 		
-	'''	bestBackOdds = runner['ex']['availableToBack']
-		if not bestBackOdds :
-			bestBackOdds = 0
-			print('no back odds available')
-		else :
-			bestBackOdds = bestBackOdds[0]['price']
-			
-		bestLayOdds = runner['ex']['availableToLay']
-		if not bestLayOdds :
-			bestLayOdds = 0
-			print('no lay odds available')
-		else :
-			bestLayOdds = bestLayOdds[0]['price']
-			
-	#	print('backOdds = ' + str(bestBackOdds))
-	#	print('layOdds = ' + str(bestLayOdds))
-		backOdds = bestBackOdds
-		layOdds = bestLayOdds
-	#print (ret1['runners'])
-	
-		#nb: this is the last runner odds.  need to vhange to return best odds...
-		#return after first one gives you the best odds!
-	
-		return  ( backOdds, layOdds )
-		'''
+
 		
 #--------------------------------------------------------
 
@@ -134,26 +108,20 @@ def getBestOdds( runner) :
 	bestBackOdds = runner['ex']['availableToBack']
 	if not bestBackOdds :
 		bestBackOdds = 0
-		print('no back odds available')
+		#print('no back odds available')
 	else :
 		bestBackOdds = bestBackOdds[0]['price']
 		
 	bestLayOdds = runner['ex']['availableToLay']
 	if not bestLayOdds :
 		bestLayOdds = 0
-		print('no lay odds available')
+		#print('no lay odds available')
 	else :
 		bestLayOdds = bestLayOdds[0]['price']
 		
-	#	print('backOdds = ' + str(bestBackOdds))
-	#	print('layOdds = ' + str(bestLayOdds))
 	backOdds = bestBackOdds
 	layOdds = bestLayOdds
-	#print (ret1['runners'])
 
-	#nb: this is the last runner odds.  need to vhange to return best odds...
-	#return after first one gives you the best odds!
-	#return marketClass.Price(getBestOdds( runner ))
 	return  ( backOdds, layOdds )
 	
 	
@@ -169,7 +137,7 @@ def getSelections ( marketId, marketType ):
 		
 	numberOfRunners = selections[0]['numberOfRunners'] 
 	
-	print( 'selections[0] = ' + str(selections[0] ))
+	#print( 'selections[0] = ' + str(selections[0] ))
 	
 	selectionList = 0
 	if marketType == foxyGlobals.correctScore :

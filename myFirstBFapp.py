@@ -38,98 +38,62 @@ Function definitions
 -----------------------------------------------------------------------
 '''
 
+#--------------------------------------------------------
+# Use the event ID's to get market data, then store in a lot of Market Data objects
+
 def callMatchOddsQuery(setOfEvents):
-	# Use the event ID's to get market data, then store in a lot of Market Data objects
+
+	print( 'callMatchOddsQuery' )
+
 	dictOfMarketObjects = marketAccess.getInplayMarketVols( setOfEvents, foxyGlobals.matchOdds )
 	if dictOfMarketObjects == 0 :
 		print('Exiting')
 		sys.exit(0)
 	marketIdCount = str(len(dictOfMarketObjects))
-	
-	
 		
 	print('___________________')	
 	print( 'List of ' + marketIdCount + ' markets above min volume size, ordered by volume')
-	#print ( )
+	
+	if marketIdCount == 0 :
+		print( 'Exiting ')
+		sys.exit (0)
 	
 	sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
-	#print(sortedDictOfMarketObjects)
-		
-	#--------------------------------------------------------
+
 	
 	sortedDictOfMarketObjects[0].price = marketAccess.getSelections(
 					sortedDictOfMarketObjects[0].id, 
 					foxyGlobals.matchOdds
 	)
 	
-	print(sortedDictOfMarketObjects)
+	sortedDictOfMarketObjects[0].numberOfRunners = len(sortedDictOfMarketObjects[0].price)
 	
-	# get the price information
-	#marketObj = dictOfMarketObjects.pop()
-	
-	
-	'''for i in sortedDictOfMarketObjects :
-		priceInfo = marketAccess.getPrices(i.id)
-		if not priceInfo :
-			print('no price info... deleting object')
-			sortedDictOfMarketObjects.remove(i)
-		else :
-			#print('priceInfo = ' + str(priceInfo) )
-			i.backPrice = priceInfo[0]
-			i.layPrice = priceInfo[1]
-			i.spread = i.layPrice - i.backPrice
-		
-	#print(sortedDictOfMarketObjects)
-	sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyBySpread ) 
-	print(sortedDictOfMarketObjects)
+	print('sortedDict = ' + str(sortedDictOfMarketObjects) )
 	
 
-	#print(dictOfMarketObjects[0])
-	backOdds = 0
-	layOdds = 0
-	#priceInfo = getPrices( marketObj.id )
-	i = 0
-	while not getPrices(sortedDictOfMarketObjects[i].id) :
-		i += 1
-		print(i)
-		
-		priceInfo = getPrices(sortedDictOfMarketObjects[i].id)
-	
-		print('backOdds = ' + str(priceInfo[0]))
-		print('layOdds = ' + str(priceInfo[1]))
-	'''
+
 
 #--------------------------------------------------------
+# Use the event ID's to get market data, then store in a lot of Market Data objects
 
 def callCorrectScoreQuery( setOfEvents ):
-	'''
-	investigate the correct score party(soccer only)
-	lets use the same set of event id's found earlier,
-	this is filtered for market (soccer) and in-play
-	
-	
-	1) get the id, name, volumes for correct score markets based on previously found set of events
-	
-	'''
-	print('Now asking for correct score')
+
+	print('callCorrectScoreQuery')
 	dictOfCorrectScore = marketAccess.getInplayMarketVols( setOfEvents, foxyGlobals.correctScore )
+	
 	if dictOfCorrectScore == 0 :
 		print('Exiting')
 		sys.exit(0)
 	correctScoreCount = len(dictOfCorrectScore)
 	
-	#print( "correctScoreCount=" + correctScoreCount)
-	
 	print('___________________')	
 	print( 'List of ' + str(correctScoreCount) + ' correct score markets above min volume size, ordered by volume')
-	#print ( )
 	
 	if correctScoreCount == 0 :
 		print( 'Exiting ')
-		exit (0)
+		sys.exit (0)
 	
 	sortedCorrectScoreObjects = sorted( dictOfCorrectScore, key=marketClass.getkeyByVolume, reverse=True ) 
-	print(sortedCorrectScoreObjects)
 	
 	
 	sortedCorrectScoreObjects[0].price = marketAccess.getSelections(
@@ -138,31 +102,22 @@ def callCorrectScoreQuery( setOfEvents ):
 	)
 				
 	sortedCorrectScoreObjects[0].numberOfRunners = len(sortedCorrectScoreObjects[0].price)
-	#marketAccess.getSelections(sortedCorrectScoreObjects[0].id)
 	
 	print(sortedCorrectScoreObjects[0])
-	print(foxyGlobals.scoreLine[0])
-	
-	'''
-	thoughts: is different as will get larger range of "runners
-	and want to determine what current score is based on the odds returned
-	
-	how do i get names of runners ?
-	
-	looks like need marketCatalogue to get information about the runner, i,e. name, selectionId
-	then marketbook to get dynamic data, i.e, price info
-	
-	try to get start time from market projections (note in documentaion for getmarketcatalogue)
-	cant find infon on runners.... maybe not available for correct score
-	'''
-	#marketAccess.getCorrectScoreCatalogue( setOfEvents[0], foxyGlobals.urlBetting )
 
 
-#======================================================================
 
 '''
-Parameter check
+=======================================================================
+
+Main:
+
+-----------------------------------------------------------------------
 '''
+
+
+# Parameter check
+
 
 args = len(sys.argv)
 
@@ -183,7 +138,7 @@ foxyGlobals.headers = {'X-Application': appKey, 'X-Authentication': sessionToken
 
 
 #--------------------------------------------------------
-# get detaiks from user's account
+# get details from user's account
 #--------------------------------------------------------
 
 accountAccess.getCurrentAccountDetails()
@@ -230,8 +185,11 @@ for id in dictOfEvents :
 
 if  queryType == foxyGlobals.matchOdds :
 	callMatchOddsQuery( setOfEvents )
-else :
+elif queryType == foxyGlobals.correctScore :
 	callCorrectScoreQuery( setOfEvents )
+else :
+	print( 'Unknown queryType: ' + queryType )
+	sys.exit(0)
 
 
 
