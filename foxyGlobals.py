@@ -9,6 +9,16 @@ requestLimit = 1000
 # The minumum traded volume to gauge the size of the market
 minVolume = 0000
 
+# max and min back odds
+maxBackOdds		= 5
+minBackOdds		= 1.7
+
+# max spread
+maxSpread = 1
+
+# numer of prices to request
+priceRequestLimit 	= 5
+
 matchOdds 		= "MATCH_ODDS"
 correctScore 	= "CORRECT_SCORE"
 
@@ -38,9 +48,9 @@ scoreLine = [
 targetScores = [
         '0-0',
         '0-1',
-        '0-2',
         '1-0',
         '1-1',
+        '0-2',
         '2-0'
 ]
 

@@ -44,68 +44,73 @@ Function definitions
 def callMatchOddsQuery(setOfEvents):
 
 	print( 'callMatchOddsQuery' )
-
-	dictOfMarketObjects = marketAccess.getInplayMarketVols( setOfEvents, foxyGlobals.matchOdds )
-	if dictOfMarketObjects == 0 :
-		print('Exiting')
-		sys.exit(0)
-	marketIdCount = str(len(dictOfMarketObjects))
-		
-	print('___________________')	
-	print( 'List of ' + marketIdCount + ' markets above min volume size, ordered by volume')
+	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.matchOdds)
 	
-	if marketIdCount == 0 :
-		print( 'Exiting ')
-		sys.exit (0)
+	print('marketObjects = ' + str( marketObjects) )
 	
-	sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
-
-	
-	sortedDictOfMarketObjects[0].price = marketAccess.getSelections(
-					sortedDictOfMarketObjects[0].id, 
-					foxyGlobals.matchOdds
-	)
-	
-	sortedDictOfMarketObjects[0].numberOfRunners = len(sortedDictOfMarketObjects[0].price)
-	
-	print('sortedDict = ' + str(sortedDictOfMarketObjects) )
-	
-
-
 
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
+# This is a soccer-only market, other market types will return 0
 
 def callCorrectScoreQuery( setOfEvents ):
 
 	print('callCorrectScoreQuery')
-	dictOfCorrectScore = marketAccess.getInplayMarketVols( setOfEvents, foxyGlobals.correctScore )
+	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
 	
-	if dictOfCorrectScore == 0 :
-		print('Exiting')
-		sys.exit(0)
-	correctScoreCount = len(dictOfCorrectScore)
+	#print('marketObjects = ' + str( marketObjects) )
 	
-	print('___________________')	
-	print( 'List of ' + str(correctScoreCount) + ' correct score markets above min volume size, ordered by volume')
+	#--------------------------------------------------------
 	
-	if correctScoreCount == 0 :
-		print( 'Exiting ')
-		sys.exit (0)
+	# Limit number of markets we want to investigate
+	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+	for i in range( limit ) :
 	
-	sortedCorrectScoreObjects = sorted( dictOfCorrectScore, key=marketClass.getkeyByVolume, reverse=True ) 
-	
-	
-	sortedCorrectScoreObjects[0].price = marketAccess.getSelections(
-					sortedCorrectScoreObjects[0].id, 
-					foxyGlobals.correctScore
-	)
-				
-	sortedCorrectScoreObjects[0].numberOfRunners = len(sortedCorrectScoreObjects[0].price)
-	
-	print(sortedCorrectScoreObjects[0])
+		selections = marketObjects[i].price
+		
+		# this finds all the non-negative selections that are in the target group
+		shortlist = [
+					selection for selection in selections 
+					if selection.spread > 0 
+				]
+		
+		print( "shortlist : " + str(shortlist))
+			
+					
+		viable = False
+		
+		# this finds the first matching correct score,
+		# sets current_score, and checks the odds are within range
+		# <TODO> does this want refactoring using 'next'?
+		loop = True
+		targetScore = foxyGlobals.targetScores
+		while loop == True  :
+			score = targetScore.pop(0)
+			for s in shortlist :
+				#print("s=" + str(s))
+				if score == s.score :
+					current_score = score
+					loop = False
+					if s.backPrice < foxyGlobals.maxBackOdds and s.backPrice > foxyGlobals.minBackOdds : 
+						if s.spread < foxyGlobals.maxSpread :
+							viable = True				
+					break
+			
+		
+		#next( (x for x in foxyGlobals.targetScores if match(x.score) ), self.currentScore )
+		
+		print( 'current_score : ' + current_score )
+		
+		# record if this is viable
+		marketObjects[i].currentScore = current_score
+		marketObjects[i].viable = viable
+		
 
 
+
+		# this calls the __str__ version to output user info 
+		print( str(marketObjects[i]))
+	
 
 '''
 =======================================================================

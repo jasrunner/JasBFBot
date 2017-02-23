@@ -108,8 +108,9 @@ def listEvents( queryText ) :
     
 
 #--------------------------------------------------------
-def listMarketCatalogue( eventList, numberEvents, marketType ) :
+def listMarketCatalogue( eventList, marketType ) :
 	
+	numberEvents = len(eventList)
 	max = min( foxyGlobals.requestLimit, numberEvents )
 	
 	if max == 0 :
@@ -147,8 +148,9 @@ def listMarketCatalogueInPlay( queryText ) :
 #--------------------------------------------------------
 def listMarketBook( marketId ) :
 	
-	params = ' "marketIds":[ ' + marketId + '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'
-	#print( list_market_book_req)
+	params = ' "marketIds":[ "' + marketId + '"] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'
+	#params = ' "marketIds":[ ' + marketId + '] '
+	#print( params )
 	
 	
 	#{"marketIds":["' + marketId + '"],"priceProjection":{"priceData":["EX_BEST_OFFERS"]}}, "id": 1}'
@@ -163,9 +165,11 @@ def listMarketBook( marketId ) :
 	return (listMarketLoads['result'])
 	
 #--------------------------------------------------------
+#<TODO> make this a list.... no change here, but need work on the other rnd
 def getEventNameFromMarketId( marketId ) :
-	params = '"filter":{"marketIds":["' + marketId + '"]} '
+#	params = '"filter":{"marketIds":["' + marketId + '"]} '
 	
+	params = '"filter":{"marketIds":[' + marketId + ']} '
 	#print(event_info_req)
 
 
@@ -173,6 +177,7 @@ def getEventNameFromMarketId( marketId ) :
 	loads = json.loads(response)
 	
 	res = loads['result'] 
+	print('res : ' + str(res))
 	return (res[0]['event'] ['name'])
 
 

@@ -5,11 +5,10 @@ import marketClass
 
 
 
-
 '''
-Task 1: 
-	get a list of all in-play markets, filtered for football
-	return the eventId, and a meaningful name for the event
+	Generate a list of all in-play markets, filtered by query,
+	e.g. soccer, cricket, etc
+	Return : dictionary { eventId : eventName }
 '''
 def getInplayMarkets( queryText ) :
 	
@@ -27,45 +26,41 @@ def getInplayMarkets( queryText ) :
 	
 #--------------------------------------------------------
 '''
-Task 2:
-	list all in-play markets for the query text specified
-	i want to see the name, and amount matched.
-	order by volume traded (is this the same as matched amount?)
+	Find market ID's for the set of event ID's
+	and market type (match odds, correct score, etc)
+	Return : dictionary of {marketId : volumeTraded}
 '''
 def getInplayMarketVols( setOfEvents, marketType ):
 	
-	#turn eventList into proper formatted list
-	numberEvents = len(setOfEvents)
-	eventString = ""
-	for eventId in setOfEvents :
-		eventString += '\"'
-		eventString += str(eventId)
-		eventString += '\"'
-		if eventId  != setOfEvents[numberEvents-1] :
-			eventString += ','
-		
-	marketCat = foxyBotLib.listMarketCatalogue( eventString, numberEvents, marketType )
+	# clever python makes csv creation easy ! 
+	s='","'
+	eventString='"' + s.join(setOfEvents) + '"'
+	
+
+	marketCat = foxyBotLib.listMarketCatalogue( eventString, marketType )
 	
 	if marketCat == 0:
 		return 0
 	
-	
+	# Extract market ID's for target events
 	myDict = {}
 	for market in marketCat:
 		marketId = market['marketId']
 		myDict[ marketId ] = market[ 'totalMatched' ]
 	
-	print("These market ID's found (ID, volume, name) ")
+	# create a list of Market objects for those satisfying min volume 
+	# populate just the volume and market id 
 	marketList = [] 
 	for id in myDict :
-		name = foxyBotLib.getEventNameFromMarketId(id)
-		print( '\t' + str( id ) + " :\t" + str(myDict[id] )  + " :\t" + name )
-		newObject =  marketClass.Market( id, name, marketType )
-		newObject.volume = myDict[ id ]
-		if newObject.volume >= foxyGlobals.minVolume :
+		if myDict[ id ] :
+			#name = foxyBotLib.getEventNameFromMarketId(id)
+			newObject =  marketClass.Market( id, marketType )
+			newObject.volume = myDict[ id ]
 			marketList.append( newObject  )
-		
+	
+	#print('market!ist. ' + str(marketList))		
 	return marketList
+
 
 
 #--------------------------------------------------------
@@ -129,7 +124,7 @@ def getBestOdds( runner) :
 def getSelections ( marketId, marketType ):
 	
 	selections = foxyBotLib.listMarketBook( marketId )
-	
+	#print(selections)
 	#if not 
 	if not selections :
 		print( 'no results from marketId')
@@ -161,13 +156,40 @@ def getSelections ( marketId, marketType ):
 	
 #--------------------------------------------------------
 '''
-Task 4:
-		Return list of best markets based on:
-			- above defined volume (e.g. 10k)
-			- ordered by smallest spread
-			
+	common code that gets market info based on event set
+		Return list of markets ordered by volume:		
 '''
+def getMarketInfo( setOfEvents, marketType ) :
+	
+	dictOfMarketObjects = getInplayMarketVols( setOfEvents, marketType )
+	if dictOfMarketObjects == 0 :
+		print('Exiting')
+		sys.exit(0)
+	marketIdCount = str(len(dictOfMarketObjects))
 
+		
+	print('___________________')	
+	print( 'List of ' + marketIdCount + ' markets above min volume size (' + str(foxyGlobals.minVolume) + '), ordered by volume')
+	
+	if marketIdCount == 0 :
+		print( 'Exiting ')
+		sys.exit (0)
+	
+	sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
+
+	# Limit number of markets we want to investigate
+	limit = min(foxyGlobals.priceRequestLimit, len(sortedDictOfMarketObjects))
+	
+	for i in range( limit ) :
+		sortedDictOfMarketObjects[i].price = getSelections(
+					sortedDictOfMarketObjects[i].id, 
+					marketType
+		)
+	
+		sortedDictOfMarketObjects[i].numberOfRunners = len(sortedDictOfMarketObjects[i].price)
+		sortedDictOfMarketObjects[i].name = foxyBotLib.getEventNameFromMarketId(sortedDictOfMarketObjects[i].id)
+	
+	return sortedDictOfMarketObjects
 	
 #--------------------------------------------------------
 '''
