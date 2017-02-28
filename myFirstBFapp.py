@@ -46,7 +46,15 @@ def callMatchOddsQuery(setOfEvents):
 	print( 'callMatchOddsQuery' )
 	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.matchOdds)
 	
-	print('marketObjects = ' + str( marketObjects) )
+	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+	
+	bestMarkets = marketObjects[:limit]
+	
+	for i in bestMarkets  :
+		i = marketAccess.populatePrice( i, foxyGlobals.matchOdds )
+	
+	# This is now the largest match odds markets
+	print('marketObjects = ' + str( bestMarkets) )
 	
 
 #--------------------------------------------------------
@@ -58,13 +66,20 @@ def callCorrectScoreQuery( setOfEvents ):
 	print('callCorrectScoreQuery')
 	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
 	
+	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+		
 	#print('marketObjects = ' + str( marketObjects) )
 	
-	#--------------------------------------------------------
+	bestMarkets = []
 	
 	# Limit number of markets we want to investigate
-	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
-	for i in range( limit ) :
+	counter = 0
+	i = 0
+	while counter < limit and i < len(marketObjects) :
+		
+		print('counter : ' + str(counter))
+		
+		marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
 	
 		selections = marketObjects[i].price
 		
@@ -73,44 +88,45 @@ def callCorrectScoreQuery( setOfEvents ):
 					selection for selection in selections 
 					if selection.spread > 0 
 				]
-		
-		print( "shortlist : " + str(shortlist))
 			
-					
+		current_score = 'not defined'	
 		viable = False
+	
 		
-		# this finds the first matching correct score,
-		# sets current_score, and checks the odds are within range
-		# <TODO> does this want refactoring using 'next'?
+		# take a copy of TargetScores
+		copyTarget = foxyGlobals.targetScores[:]
+
+		
 		loop = True
-		targetScore = foxyGlobals.targetScores
-		while loop == True  :
-			score = targetScore.pop(0)
+		while loop :
+			t = copyTarget.pop(0)
+			if len(copyTarget) == 0 :
+				loop = False
+			
 			for s in shortlist :
-				#print("s=" + str(s))
-				if score == s.score :
-					current_score = score
+				if t == s.score :
+					current_score = t
 					loop = False
 					if s.backPrice < foxyGlobals.maxBackOdds and s.backPrice > foxyGlobals.minBackOdds : 
 						if s.spread < foxyGlobals.maxSpread :
-							viable = True				
+							viable = True
+							counter += 1				
 					break
-			
 		
-		#next( (x for x in foxyGlobals.targetScores if match(x.score) ), self.currentScore )
 		
-		print( 'current_score : ' + current_score )
-		
+
 		# record if this is viable
 		marketObjects[i].currentScore = current_score
 		marketObjects[i].viable = viable
+
+		if viable == True :
+			bestMarkets.append( marketObjects[i] )
+
+		i += 1
 		
-
-
-
-		# this calls the __str__ version to output user info 
-		print( str(marketObjects[i]))
-	
+	# this calls the __str__ version to output user info 
+	print( str( bestMarkets ))
+		
 
 '''
 =======================================================================

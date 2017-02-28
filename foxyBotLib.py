@@ -169,7 +169,7 @@ def listMarketBook( marketId ) :
 def getEventNameFromMarketId( marketId ) :
 #	params = '"filter":{"marketIds":["' + marketId + '"]} '
 	
-	params = '"filter":{"marketIds":[' + marketId + ']} '
+	params = '"filter":{"marketIds":["' + marketId + '"]} '
 	#print(event_info_req)
 
 
@@ -177,7 +177,11 @@ def getEventNameFromMarketId( marketId ) :
 	loads = json.loads(response)
 	
 	res = loads['result'] 
-	print('res : ' + str(res))
+	#print('res : ' + str(res))
+	
+	if res == [] :
+		print('WARNING : Returning empty string')
+		return ""
 	return (res[0]['event'] ['name'])
 
 

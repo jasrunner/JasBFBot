@@ -72,8 +72,9 @@ class Market (object):
 	def __str__( self ) :
 		
 		# just interested in the matching current score
-		selection = next( (x for x in self.price if match(x.score) ), self.currentScore )
+		#selection = next( x for x in self.price if x.score == self.currentScore )
 		
+		selection = next( ( x for x in self.price if x.score == self.currentScore), None )
 		
 		return '''
 			\tMarket ID: 			{}

@@ -176,22 +176,31 @@ def getMarketInfo( setOfEvents, marketType ) :
 		sys.exit (0)
 	
 	sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
-
-	# Limit number of markets we want to investigate
-	limit = min(foxyGlobals.priceRequestLimit, len(sortedDictOfMarketObjects))
-	
-	for i in range( limit ) :
-		sortedDictOfMarketObjects[i].price = getSelections(
-					sortedDictOfMarketObjects[i].id, 
-					marketType
-		)
-	
-		sortedDictOfMarketObjects[i].numberOfRunners = len(sortedDictOfMarketObjects[i].price)
-		sortedDictOfMarketObjects[i].name = foxyBotLib.getEventNameFromMarketId(sortedDictOfMarketObjects[i].id)
 	
 	return sortedDictOfMarketObjects
+
+	
 	
 #--------------------------------------------------------
+'''
+	common code that gets Price info for given market object
+	Return: market object
+'''
+def populatePrice( marketObject, marketType) :
+	
+	marketObject.price = getSelections(
+				marketObject.id, 
+					marketType
+	)
+
+	marketObject.numberOfRunners = len(marketObject.price)
+	marketObject.name = foxyBotLib.getEventNameFromMarketId(marketObject.id)
+
+	return marketObject
+
+
+#--------------------------------------------------------
+
 '''
 Task 5:
 	get correct score information for all runners for given event
