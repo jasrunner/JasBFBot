@@ -77,8 +77,6 @@ def callCorrectScoreQuery( setOfEvents ):
 	i = 0
 	while counter < limit and i < len(marketObjects) :
 		
-		print('counter : ' + str(counter))
-		
 		marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
 	
 		selections = marketObjects[i].price
@@ -125,7 +123,9 @@ def callCorrectScoreQuery( setOfEvents ):
 		i += 1
 		
 	# this calls the __str__ version to output user info 
-	print( str( bestMarkets ))
+	for i in bestMarkets :
+		print( str(i) )
+	#print( str( bestMarkets ))
 		
 
 '''
