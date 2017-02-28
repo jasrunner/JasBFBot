@@ -11,7 +11,7 @@ class Account (object):
 		return '''
 			\tAccount: 						{}
 			\t	Name: 						{} 
-			\t	Available To Bet:	{}
+			\t	Available To Bet:		{}
 			\t	Exposure :				{}
 
 			'''.format ( 

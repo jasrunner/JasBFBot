@@ -38,12 +38,107 @@ Function definitions
 -----------------------------------------------------------------------
 '''
 
+#--------------------------------------------------------
+# Use the event ID's to get market data, then store in a lot of Market Data objects
 
-#======================================================================
+def callMatchOddsQuery(setOfEvents):
+
+	print( 'callMatchOddsQuery' )
+	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.matchOdds)
+	
+	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+	
+	bestMarkets = marketObjects[:limit]
+	
+	for i in bestMarkets  :
+		i = marketAccess.populatePrice( i, foxyGlobals.matchOdds )
+	
+	# This is now the largest match odds markets
+	print('marketObjects = ' + str( bestMarkets) )
+	
+
+#--------------------------------------------------------
+# Use the event ID's to get market data, then store in a lot of Market Data objects
+# This is a soccer-only market, other market types will return 0
+
+def callCorrectScoreQuery( setOfEvents ):
+
+	print('callCorrectScoreQuery')
+	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
+	
+	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+		
+	#print('marketObjects = ' + str( marketObjects) )
+	
+	bestMarkets = []
+	
+	# Limit number of markets we want to investigate
+	counter = 0
+	i = 0
+	while counter < limit and i < len(marketObjects) :
+		
+		marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
+	
+		selections = marketObjects[i].price
+		
+		# this finds all the non-negative selections that are in the target group
+		shortlist = [
+					selection for selection in selections 
+					if selection.spread > 0 
+				]
+			
+		current_score = 'not defined'	
+		viable = False
+	
+		
+		# take a copy of TargetScores
+		copyTarget = foxyGlobals.targetScores[:]
+
+		
+		loop = True
+		while loop :
+			t = copyTarget.pop(0)
+			if len(copyTarget) == 0 :
+				loop = False
+			
+			for s in shortlist :
+				if t == s.score :
+					current_score = t
+					loop = False
+					if s.backPrice < foxyGlobals.maxBackOdds and s.backPrice > foxyGlobals.minBackOdds : 
+						if s.spread < foxyGlobals.maxSpread :
+							viable = True
+							counter += 1				
+					break
+		
+		
+
+		# record if this is viable
+		marketObjects[i].currentScore = current_score
+		marketObjects[i].viable = viable
+
+		if viable == True :
+			bestMarkets.append( marketObjects[i] )
+
+		i += 1
+		
+	# this calls the __str__ version to output user info 
+	for i in bestMarkets :
+		print( str(i) )
+	#print( str( bestMarkets ))
+		
 
 '''
-Parameter check
+=======================================================================
+
+Main:
+
+-----------------------------------------------------------------------
 '''
+
+
+# Parameter check
+
 
 args = len(sys.argv)
 
@@ -64,12 +159,15 @@ foxyGlobals.headers = {'X-Application': appKey, 'X-Authentication': sessionToken
 
 
 #--------------------------------------------------------
-#foxyBotLib.getAccountDetails()
-#foxyBotLib.getAccountFunds()
-accountAccess.getCurrentAccountDetails()
+# get details from user's account
 #--------------------------------------------------------
 
+accountAccess.getCurrentAccountDetails()
 
+
+#--------------------------------------------------------
+# get input from user
+#--------------------------------------------------------
 searchString = input ('Enter search term, s=soccer, t=tennis, c=cricket' )
 if  searchString == 's'  :
 	searchString = 'Soccer'
@@ -78,6 +176,17 @@ elif searchString == 't' :
 else :
 	searchString = 'Cricket'
 
+
+
+queryType = input ('Enter search term, m=match_odds, c=correct_score' )
+if  queryType == 'c'  :
+	queryType = foxyGlobals.correctScore
+else :
+	queryType = foxyGlobals.matchOdds
+
+#--------------------------------------------------------
+# common processing: identify inplay events for the chosen sports betting category
+#--------------------------------------------------------
 
 dictOfEvents = marketAccess.getInplayMarkets( searchString )
 inplayMarketCount = str(len(dictOfEvents))
@@ -94,64 +203,21 @@ for id in dictOfEvents :
 
 
 #--------------------------------------------------------
-# Use the event ID's to get market data, then store in a lot of Market Data objects
-dictOfMarketObjects = marketAccess.getInplayMarketVols( setOfEvents )
-if dictOfMarketObjects == 0 :
-	print('Exiting')
+
+if  queryType == foxyGlobals.matchOdds :
+	callMatchOddsQuery( setOfEvents )
+elif queryType == foxyGlobals.correctScore :
+	callCorrectScoreQuery( setOfEvents )
+else :
+	print( 'Unknown queryType: ' + queryType )
 	sys.exit(0)
-marketIdCount = str(len(dictOfMarketObjects))
 
-'''
-marketList = [] 
-for id in dictOfMarketIds :
-	name = foxyBotLib.getEventNameFromMarketId(id)
-	print( '\t' + str( id ) + " :\t" + str(dictOfMarketIds[id] )  + " :\t" + name )
-	newObject =  marketClass.Market( id, name )
-	newObject.volume = dictOfMarketIds[ id ]
-	marketList.append( newObject  )'''
-	
-print('___________________')	
-print( 'List of ' + marketIdCount + ' markets above min volume size, ordered by volume')
-#print ( )
 
-sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
-#print(sortedDictOfMarketObjects)
-	
+
+
+
 #--------------------------------------------------------
-# get the price information
-#marketObj = dictOfMarketObjects.pop()
 
-
-for i in sortedDictOfMarketObjects :
-	priceInfo = marketAccess.getPrices(i.id)
-	if not priceInfo :
-		print('no price info... deleting object')
-		sortedDictOfMarketObjects.remove(i)
-	else :
-		#print('priceInfo = ' + str(priceInfo) )
-		i.backPrice = priceInfo[0]
-		i.layPrice = priceInfo[1]
-		i.spread = i.layPrice - i.backPrice
-	
-#print(sortedDictOfMarketObjects)
-sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyBySpread ) 
-print(sortedDictOfMarketObjects)
-
-'''	
-#print(dictOfMarketObjects[0])
-backOdds = 0
-layOdds = 0
-#priceInfo = getPrices( marketObj.id )
-i = 0
-while not getPrices(sortedDictOfMarketObjects[i].id) :
-	i += 1
-	print(i)
-	
-	priceInfo = getPrices(sortedDictOfMarketObjects[i].id)
-
-	print('backOdds = ' + str(priceInfo[0]))
-	print('layOdds = ' + str(priceInfo[1]))
-'''
 
 
 

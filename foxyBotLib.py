@@ -108,16 +108,17 @@ def listEvents( queryText ) :
     
 
 #--------------------------------------------------------
-def listMarketCatalogue( eventList, numberEvents ) :
+def listMarketCatalogue( eventList, marketType ) :
 	
+	numberEvents = len(eventList)
 	max = min( foxyGlobals.requestLimit, numberEvents )
 	
 	if max == 0 :
 		print('No events available, returning')
 		return 0
 	params = '"filter":{"eventIds":[' + eventList
-	params += '], "marketTypeCodes": ["MATCH_ODDS"]},  "maxResults" : '
-	params += str(max) + '}'
+	params += '], "marketTypeCodes": ["' + marketType
+	params += '"]},  "maxResults" : '  + str(max) + '}'
 
 	#print ('Calling listMarketCatalogue')
 	
@@ -125,7 +126,7 @@ def listMarketCatalogue( eventList, numberEvents ) :
 	#print( listMarketResponse )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')
-	print(listMarketLoads)
+	#print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 	
@@ -147,13 +148,9 @@ def listMarketCatalogueInPlay( queryText ) :
 #--------------------------------------------------------
 def listMarketBook( marketId ) :
 	
-	params = ' "marketIds":[ ' + marketId + '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'
-	#print( list_market_book_req)
-	
+	params = ' "marketIds":[ "' + marketId + '"] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
 	
 	#{"marketIds":["' + marketId + '"],"priceProjection":{"priceData":["EX_BEST_OFFERS"]}}, "id": 1}'
-  
-	
 	
 	#print ('Calling listMarketBook to get price information')
 	listMarketResponse = callAping( sports, "listMarketBook", params )
@@ -165,14 +162,16 @@ def listMarketBook( marketId ) :
 #--------------------------------------------------------
 def getEventNameFromMarketId( marketId ) :
 	params = '"filter":{"marketIds":["' + marketId + '"]} '
-	
-	#print(event_info_req)
-
 
 	response = callAping( sports, "listEvents", params )
 	loads = json.loads(response)
 	
 	res = loads['result'] 
+	#print('res : ' + str(res))
+	
+	if res == [] :
+		print('WARNING : Returning empty string')
+		return ""
 	return (res[0]['event'] ['name'])
 
 
