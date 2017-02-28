@@ -148,14 +148,9 @@ def listMarketCatalogueInPlay( queryText ) :
 #--------------------------------------------------------
 def listMarketBook( marketId ) :
 	
-	params = ' "marketIds":[ "' + marketId + '"] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'
-	#params = ' "marketIds":[ ' + marketId + '] '
-	#print( params )
-	
+	params = ' "marketIds":[ "' + marketId + '"] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
 	
 	#{"marketIds":["' + marketId + '"],"priceProjection":{"priceData":["EX_BEST_OFFERS"]}}, "id": 1}'
-  
-	
 	
 	#print ('Calling listMarketBook to get price information')
 	listMarketResponse = callAping( sports, "listMarketBook", params )
@@ -165,13 +160,8 @@ def listMarketBook( marketId ) :
 	return (listMarketLoads['result'])
 	
 #--------------------------------------------------------
-#<TODO> make this a list.... no change here, but need work on the other rnd
 def getEventNameFromMarketId( marketId ) :
-#	params = '"filter":{"marketIds":["' + marketId + '"]} '
-	
 	params = '"filter":{"marketIds":["' + marketId + '"]} '
-	#print(event_info_req)
-
 
 	response = callAping( sports, "listEvents", params )
 	loads = json.loads(response)

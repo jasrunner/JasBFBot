@@ -7,7 +7,7 @@ headers = ""
 requestLimit = 1000
 
 # The minumum traded volume to gauge the size of the market
-minVolume = 0000
+minVolume = 10000
 
 # max and min back odds
 maxBackOdds		= 5
