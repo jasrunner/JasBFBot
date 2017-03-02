@@ -22,6 +22,7 @@ import urllib.error
 import json
 import datetime
 import sys
+import pickle
 
 import connectionDetails
 import foxyBotLib
@@ -37,6 +38,21 @@ Function definitions
 
 -----------------------------------------------------------------------
 '''
+
+def saveToFile( marketData, filename ) :
+	
+	# Store data (serialize)
+	with open( filename, 'wb') as handle:
+		pickle.dump(marketData, handle, protocol=pickle.HIGHEST_PROTOCOL)
+	
+	
+def loadFromFile( filename ) :
+	# Load data (deserialize)
+	with open( filename, 'rb') as handle:
+		unserialized_data = pickle.load(handle)
+
+	print('your_data == ' )
+	print (unserialized_data)
 
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
@@ -56,6 +72,9 @@ def callMatchOddsQuery(setOfEvents):
 	# This is now the largest match odds markets
 	print('marketObjects = ' + str( bestMarkets) )
 	
+	filename = 'match_odds.pickle'
+	saveToFile(bestMarkets, filename)
+	loadFromFile(filename)
 
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
@@ -126,6 +145,10 @@ def callCorrectScoreQuery( setOfEvents ):
 	for i in bestMarkets :
 		print( str(i) )
 	#print( str( bestMarkets ))
+	
+	filename = 'current_score.pickle'
+	saveToFile(marketObjects, filename)
+	loadFromFile(filename)
 		
 
 '''
