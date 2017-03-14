@@ -23,6 +23,8 @@ matchOdds 		= "MATCH_ODDS"
 correctScore 	= "CORRECT_SCORE"
 
 
+defaultFilename = "backup.pickle"
+
 scoreLine = [
         '0-0',
         '0-1',
