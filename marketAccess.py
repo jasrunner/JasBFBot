@@ -145,8 +145,9 @@ def getSelections ( marketId, marketType ):
 	runners = selections[0]['runners'] 
 	count = 0
 	for runner in runners :
+		selectionId = runner['selectionId']
 		odds =   getBestOdds( runner ) 
-		newPrice = marketClass.Price(odds)
+		newPrice = marketClass.Price(odds, selectionId)
 		newPrice.score = selectionList[ count ]
 		prices.append(newPrice)
 		count += 1

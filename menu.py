@@ -4,6 +4,7 @@ import sys, os
 
 import accountAccess
 import marketAccess
+import orders
 import foxyGlobals
 import fileOperations
 
@@ -28,6 +29,7 @@ def mainMenu( args ):
 	print( "1. Accounts" )
 	print( "2. Sports" )
 	print( "3. Load from file" )
+	print( "4. Test " )
 	print( "\n0. Quit" )
 	choice = input(" >>  ")
 	exec_menu( choice, '')
@@ -110,7 +112,8 @@ def soccerMenu( args ):
 		
 	elif choice.lower() == '2' :
 		bestMarkets = callCorrectScoreQuery( setOfEvents )
-		choice = '20'
+		# add 'if' here, i.e. if more than 0 best amrkets, do 30, else do 20
+		choice = '30'
 		
 	elif choice.lower() == '3' :
 		print( "Enter Filename, " + foxyGlobals.defaultFilename + " is default)" )
@@ -118,34 +121,48 @@ def soccerMenu( args ):
 		fileOperations.saveToFile( args, filename )
 		choice = '20'
 	
-	print('best markets = ' + str( bestMarkets ) )
+	#print('best markets = ' + str( bestMarkets ) )
 			
 	exec_menu(choice, bestMarkets)
 	
 	return
 #--------------------------------------------------------
 # Menu 4
-'''
-def saveMenu( args ):
+
+def bettingMenu( args ):
 	
 	
-	print( "\n======\nSave\n------\n" )
+	print( "\n===========\nBettingMenu\n---------\n" )
 	
+	print( "1. Place a bet")
+	print( "2. List current orders")
 	print( "9. Back" )
 	print( "0. Quit" )
 	choice = input(" >>  ")
 	
 	if choice.lower() == '1' :
-		print( "Enter Filename, " + foxyGlobals.defaultFilemame + " is default)" )
-		filename = input(" >> " )
-		savetoFile( args, filename )
-		choice = '20'
+		print( "you chose to place a bet" )
+		callPlaceABet( args )
+		choice = '30'
 		
 		
 	exec_menu(choice, '')
 	
 	return
-'''
+
+#--------------------------------------------------------
+# Menu 5
+def testMenu( args ):
+	print( "\n========\nTest Menu\n--------\n" )
+	print( "1. Run Correct Score test" )
+	print( "9. Back" )
+	print( "0. Quit" )
+	choice = input(" >>  ")
+
+	if choice.lower() == '1' :
+		testCorrectScore( args )
+	exec_menu(choice, '')
+	return
 
 #--------------------------------------------------------
 # Back to main menu
@@ -174,6 +191,14 @@ def loadFromFile( args ) :
 	print( loadedData)
 	
 	mainMenu( '' )
+
+#--------------------------------------------------------		
+def callPlaceABet(args) :
+	print("calling out to betting function here")
+	
+	orders.makeABet(args)
+	
+	back(args)
 	
 '''
 =======================================================================
@@ -226,6 +251,7 @@ def callMatchOddsQuery(setOfEvents):
 	
 	# This is now the largest match odds markets
 	print('marketObjects = ' + str( bestMarkets) )
+	print(bestMarkets)
 	
 	return bestMarkets
 	
@@ -311,7 +337,11 @@ def callCorrectScoreQuery( setOfEvents ):
 	#fileOperations.saveToFile(marketObjects, filename)
 	#fileOperations.loadFromFile(filename)
 	
+
 	
+#--------------------------------------------------------
+def testCorrectScore( args )	 :
+	return
 '''
 =======================================================================
 
@@ -327,9 +357,11 @@ menu_actions = {
 	'1': accountsMenu,
 	'2': sportsMenu,
 	'3': loadFromFile,
+	'4': testMenu,
 	'10': accountSummary,
 	'20': soccerMenu,
 	'21': matchOdds,
+	'30': bettingMenu,
 	'9': back,
 	'0': exit,
 }

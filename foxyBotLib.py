@@ -38,7 +38,7 @@ def callAping( requestType, query, params ):
 			return jsonResponse.decode('utf-8')
 		except urllib.error.URLError as e:
 			print (e.reason) 
-			print ('Oops no service available at ' + str(foxyGlobals.url))
+			print ('Oops no service available at ' + str(url))
 			exit()
 		except urllib.error.HTTPError:
 			print ('Oops not a valid operation from the service ' + str(foxyGlobals.url))
@@ -71,7 +71,38 @@ def getAccountFunds():
 #--------------------------------------------------------  
 # Sports
 #--------------------------------------------------------
+'''
+        "params": {
+            "marketId": "1.109850906",
+            "instructions": [
+                {
+                    "selectionId": "237486",
+                    "handicap": "0",
+                    "side": "LAY",
+                    "orderType": "LIMIT",
+                    "limitOrder": {
+                        "size": "2",
+                        "price": "3",
+                        "persistenceType": "LAPSE"
+                    }
+                }
+'''
+def placeOrders(marketId, selectionId):
+	
+	params = '"marketId":"' + marketId + '"} '
+	params += ', "instructions": [ { "selectionId": "' + selectionId
+	params += '",  "side": "BACK" }  ] '
+	
+	
+	#print ('Calling listEvents to get list of event ids')
+	#print(list_events_req)
+	listEventsResponse = callAping( sports, "placeOrders", params )
+	listEventsLoads = json.loads(listEventsResponse)
 
+	return listEventsLoads['result']
+
+
+#--------------------------------------------------------
 def getEventTypes():
     params = '"filter":{"textQuery":"Tennis","inPlayOnly":true}'
     

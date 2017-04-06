@@ -2,7 +2,8 @@ import pickle
 
 class Price (object):
 	
-	def __init__ ( self, odds ) :
+	def __init__ ( self, odds, s_id ) :
+		self.selectionId = s_id
 		self.layPrice		= odds[1]
 		self.backPrice	= odds[0]
 		self.spread 		= self.layPrice - self.backPrice
@@ -13,12 +14,14 @@ class Price (object):
 			\t	  Score :          {}
 			\t	  Lay Price :		    {}
 			\t	  Back Price :		{} 
-			\t	  Spread : 			{}
+			\t    Spread : 			{}
+			\t    Selection Id : 	{}
 			'''.format ( 
 				self.score ,
 				self.layPrice ,
 				self.backPrice ,
-				self.spread
+				self.spread,
+				self.selectionId
 			)
 
 #def getkeyBySpread ( Price ) :
