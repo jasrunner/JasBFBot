@@ -10,8 +10,11 @@ requestLimit = 1000
 minVolume = 10000
 
 # max and min back odds
-maxBackOdds		= 5
+maxBackOdds		= 4.5
 minBackOdds		= 1.7
+
+# minimum bet
+minBetSize = 2
 
 # max spread
 maxSpread = 1
@@ -22,6 +25,8 @@ priceRequestLimit 	= 5
 matchOdds 		= "MATCH_ODDS"
 correctScore 	= "CORRECT_SCORE"
 
+back = "BACK"
+lay = "LAY"
 
 defaultFilename = "backup.pickle"
 
@@ -61,3 +66,5 @@ matchOutcome = [
 				'away',
 				'draw'
 ]
+
+

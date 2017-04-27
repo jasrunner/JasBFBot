@@ -38,6 +38,7 @@ class Market (object):
 	
 	def __init__( self, id,  marketType ) :
 		self.id 				= id
+		self.version 		= 0
 		self.marketType = marketType
 		self.name 			= 'not defined'
 		self.volume 		= 0
@@ -51,6 +52,7 @@ class Market (object):
 		
 		return '''
 			\tMarket ID: 			{}
+			\t	Version 			{}
 			\t	Market Type:		{}
 			\t	Name: 				{} 
 			\t	Volume: 			{}
@@ -61,6 +63,7 @@ class Market (object):
 			'''.format ( 
 				#self.__class__.__name__,
 				self.id ,
+				self.version ,
 				self.marketType ,
 				self.name ,
 				self.volume ,
@@ -81,6 +84,7 @@ class Market (object):
 		
 		return '''
 			\tMarket ID: 			{}
+			\t	Version:		{}
 			\t	Market Type:		{}
 			\t	Name: 				{} 
 			\t	Volume: 			{}
@@ -89,6 +93,7 @@ class Market (object):
 			\t  Selection		{}
 			'''.format ( 
 				self.id ,
+				self.version ,
 				self.marketType ,
 				self.name ,
 				self.volume ,

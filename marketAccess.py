@@ -131,6 +131,7 @@ def getSelections ( marketId, marketType ):
 		return 
 		
 	numberOfRunners = selections[0]['numberOfRunners'] 
+	version = selections[0]['version']
 	
 	#print( 'selections[0] = ' + str(selections[0] ))
 	
@@ -148,11 +149,11 @@ def getSelections ( marketId, marketType ):
 		selectionId = runner['selectionId']
 		odds =   getBestOdds( runner ) 
 		newPrice = marketClass.Price(odds, selectionId)
-		newPrice.score = selectionList[ count ]
+		newPrice.score = selectionList[ count ] 
 		prices.append(newPrice)
 		count += 1
 		
-	return prices
+	return (version, prices)
 		
 	
 #--------------------------------------------------------
@@ -189,13 +190,17 @@ def getMarketInfo( setOfEvents, marketType ) :
 '''
 def populatePrice( marketObject, marketType) :
 	
-	marketObject.price = getSelections(
+	
+	selections = getSelections(
 				marketObject.id, 
 					marketType
 	)
+	marketObject.price = selections[1]
+	marketObject.version = selections[0]
 
 	marketObject.numberOfRunners = len(marketObject.price)
 	marketObject.name = foxyBotLib.getEventNameFromMarketId(marketObject.id)
+	
 
 	return marketObject
 

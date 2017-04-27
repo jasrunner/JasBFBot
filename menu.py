@@ -144,7 +144,12 @@ def bettingMenu( args ):
 		print( "you chose to place a bet" )
 		callPlaceABet( args )
 		choice = '30'
-		
+	if choice.lower() == '3' :
+		print( "Lay. Bet : enter amount")
+		amount = input( " >>  ")
+		print( "Lay Bet : enter odds")
+		odds = input( " >>  ")
+		callLayABet( )
 		
 	exec_menu(choice, '')
 	
@@ -194,9 +199,15 @@ def loadFromFile( args ) :
 
 #--------------------------------------------------------		
 def callPlaceABet(args) :
-	print("calling out to betting function here")
+	print("calling out to betting function here for first item only")
 	
-	orders.makeABet(args)
+	if args == [] :
+		print('Nothing found that satisfies criteria')
+		back(args)
+	
+	market = args[0]
+	print(market)
+	orders.makeABet(market)
 	
 	back(args)
 	
@@ -341,6 +352,12 @@ def callCorrectScoreQuery( setOfEvents ):
 	
 #--------------------------------------------------------
 def testCorrectScore( args )	 :
+	
+	setOfEvents = getSetOfEvents( 'Soccer' )
+	bestMarkets = callCorrectScoreQuery( setOfEvents )
+	callPlaceABet( bestMarkets )
+	
+		
 	return
 '''
 =======================================================================
