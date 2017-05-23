@@ -31,7 +31,7 @@ def callAping( requestType, query, params ):
 			part3 = '", "params":{' + params + '},  "id": 1} '
 			jsonrpc_req = part1 + part2 + part3
 				
-			print( jsonrpc_req )
+			#print( jsonrpc_req )
 			req = urllib.request.Request(url, jsonrpc_req.encode('utf-8'), foxyGlobals.headers)
 			response = urllib.request.urlopen(req)
 			jsonResponse = response.read()
@@ -82,10 +82,8 @@ def placeOrders(marketVersion, marketId, selectionId, betAmount, betOdds, side )
 	params += '", "price":"' + betOdds + '", "persistenceType":"LAPSE"}}] '
 	params += ', "version":' + marketVersion 
 	
-	print('params : ' + params)
+	#print('params : ' + params)
 	
-	#print ('Calling listEvents to get list of event ids')
-	#print(list_events_req)
 	listEventsResponse = callAping( sports, "placeOrders", params )
 	listEventsLoads = json.loads(listEventsResponse)
 	
@@ -101,8 +99,8 @@ def listCurrentOrders( ):
 	response = callAping( sports, "listCurrentOrders", "" )
 	loads = json.loads(response)
 	
-	print('response = ')
-	print(response)
+	#print('response = ')
+	#print(response)
 
 	return loads['result']
 

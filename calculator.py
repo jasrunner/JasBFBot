@@ -1,11 +1,18 @@
 from decimal import *
 
+
+#--------------------------------------------------------
+# Definitions
+#--------------------------------------------------------
+
 targetROI 			= Decimal( 0.1 )
 commissionRate 	= Decimal( 0.05 )
 
-#--------------------------------------------------------
-# Functions
-#--------------------------------------------------------
+'''
+Price	Increment:
+	http://docs.developer.betfair.com/docs/plugins/servlet/mobile#content/view/4391786
+	placing bets outside these price increments will result in INVALID_ODDS error
+'''
 
 # start price, stop price, increment, accuracy
 PRICE_INCREMENTS = (
@@ -24,29 +31,14 @@ PRICE_INCREMENTS = (
 MIN_PRICE = 1.01
 MAX_PRICE = 1000
 
-'''
-Price	Increment:
-	http://docs.developer.betfair.com/docs/plugins/servlet/mobile#content/view/4391786
-	placing bets outside these price increments will resuls in INVALID_ODDS error
-	
-	take target price, and find closest increment - .5 round down or up ?
-'''
 
-def nearestOdds( odds ) :
-	if odds < 1.01 :
-		print( 'Error in nearestOdds: odds = ' + odds )
-		# shiuld we throw here?
-		return 0
-		
-	if odds <= 1.01 and odds < 2 :
-		return odds
+#--------------------------------------------------------
+# Functions
+#--------------------------------------------------------
 
-	
-'''
-	price has increment information : 
-		min, max, increment, accuracy
-		e.g. 1.01 -> 2, 0.01, '0.01' (last part is a string used by Decimal.quantize)
-'''
+
+# take target price, and find closest increment
+#--------------------------------------------------------
 def nearest_increment( myPrice ) :
 	
 	# guard the min and max to ensure stake within allowable bounds
@@ -88,7 +80,7 @@ def nearest_increment( myPrice ) :
 
 	
 	
-
+#--------------------------------------------------------
 def calculateLayStake( backOdds, backStake ) :
 	
 	netPnL			= targetROI * backStake
@@ -113,19 +105,9 @@ def calculateLayStake( backOdds, backStake ) :
 	
 	layOdds			= - 1 * ( ( liability / layStake ) - 1 )
 	
-	# round thelkayOdds to the nearest allowable value
+	# round the layOdds to the nearest allowable value
 	layOdds = nearest_increment( layOdds )
 
-	
-
-	'''
-	print('netpnl = ' + str(netPnL))
-	print('grosspnl = ' + str(grossPnL))
-	print('commission = ' + str(commission))
-	print('backReturn = '  + str(backreturn))
-	print('backWin = ' + str(backWin))
-	print('liability = ' + str(liability))
-	'''
 	
 	return  ( layStake, layOdds )
 
@@ -136,7 +118,7 @@ def calculateLayStake( backOdds, backStake ) :
 
 def testCalculateLayStake() :
 
-	backOdds 	= Decimal(3.05)
+	backOdds 	= Decimal(2.76)
 	backStake = Decimal(2.0)
 		
 	layBet 	= calculateLayStake( backOdds, backStake )
@@ -151,14 +133,6 @@ def testCalculateLayStake() :
 
 
 
-	
-	
-	
-
-
 testPrice = testCalculateLayStake()
 
 
-#BFPrice = testRoundToBFPrice( 3.8383 )
-#print('rounded price = ' + str(BFPrice))	
-	

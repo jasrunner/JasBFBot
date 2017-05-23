@@ -24,14 +24,7 @@ class Price (object):
 				self.selectionId
 			)
 
-#def getkeyBySpread ( Price ) :
-#	return Price.spread
-	
-#def getkeyByBackPrice ( Price ) :
-#	return Price.backPrice	
-	
-#def getKeyByScore ( Price ) :
-#	return Price.score
+
 	
 class Market (object):
 	
@@ -46,7 +39,6 @@ class Market (object):
 		self.price           = []
 		self.currentScore    = 'not defined'
 		self.viable          = False
-		self.betId           = 0
 
 		
 	def __repr__( self ) :
@@ -61,7 +53,6 @@ class Market (object):
 			\t	Current Score 	{}
 			\t	Viable 	{}
 			\t	Price :		{}
-			\t  Bet ID :  {}
 			'''.format ( 
 				#self.__class__.__name__,
 				self.id ,
@@ -73,16 +64,13 @@ class Market (object):
 				self.currentScore ,
 				self.viable ,
 				#priceInfo
-				self.price ,
-				self.betId
+				self.price
 			)
 			
 	
 	def __str__( self ) :
 		
-		# just interested in the matching current score
-		#selection = next( x for x in self.price if x.score == self.currentScore )
-		
+		# just interested in the matching current score		
 		selection = next( ( x for x in self.price if x.score == self.currentScore), None )
 		
 		return '''
@@ -94,7 +82,6 @@ class Market (object):
 			\t	Current Score 	{}
 			\t	Viable 			{}
 			\t  Selection		{}
-			\t  Bet ID:   {}
 			'''.format ( 
 				self.id ,
 				self.version ,
@@ -103,8 +90,7 @@ class Market (object):
 				self.volume ,
 				self.currentScore ,
 				self.viable ,
-				selection ,
-				self.betId
+				selection 
 			)	
 	
 def getkeyByVolume ( Market ) :

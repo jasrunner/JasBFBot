@@ -3,7 +3,7 @@ import marketClass
 import foxyGlobals
 import calculator
 import timeit
-import bs4
+#import bs4
 from decimal import *
 
 #--------------------------------------------------------
@@ -30,21 +30,7 @@ def makeABet( market ) :
 		return 
 	'''
 	
-	'''
-	Return from placeOrders(back) is:  {'marketId': '1.131475201', 'instructionReports': [
-		{'betId': '92890636267', 
-		
-		'instruction': 
-			{'orderType': 'LIMIT', 'side': 'BACK', 'selectionId': 1, 'limitOrder': {'persistenceType': 'LAPSE', 'price': 3.0, 'size': 2.0}}, '
-			
-			
-			status': 'SUCCESS',
-			 'placedDate': '2017-05-14T20:05:30.000Z',
-			  'sizeMatched': 2.0, 
-			  'averagePriceMatched': 3.0, 
-			  'orderStatus': 'EXECUTION_COMPLETE'}
-		], 'status': 'SUCCESS'}
-	'''
+	
 	# how to check for sucessful bet ?
 	print(ret['instructionReports'])
 	orderStatus =  ret['instructionReports'][0]['orderStatus']
@@ -91,11 +77,7 @@ def makeABet( market ) :
 		
 	return
 	
-	'''
-	Status is: SUCCESS
-[{'betId': '92893366442', 'instruction': {'orderType': 'LIMIT', 'side': 'BACK', 'selectionId': 4, 'limitOrder': {'persistenceType': 'LAPSE', 'price': 1.81, 'size': 2.0}}, 'status': 'SUCCESS', 'placedDate': '2017-05-14T20:36:04.000Z', 'sizeMatched': 0.0, 'averagePriceMatched': 0.0, 'orderStatus': 'EXECUTABLE'}]
-orderStatus is: EXECUTABLE
-	'''
+
 
 #--------------------------------------------------------
 class Order (object):
@@ -124,8 +106,6 @@ class Order (object):
 				self.status
 			)
 			
-	#def getkeyByMarketId ( Order ) :
-	#	return Order.marketId
 
 
 #--------------------------------------------------------
@@ -139,10 +119,6 @@ def listCurrentOrders(  ) :
 	if currentOrders == [] :
 		print('no current bets')
 		return []
-	
-	'''
-	{"betId":"93505375296","marketId":"1.131711693","selectionId":1,"handicap":0.0,"priceSize":{"price":3.7,"size":2.0},"bspLiability":0.0,"side":"BACK","status":"EXECUTION_COMPLETE","persistenceType":"LAPSE","orderType":"LIMIT","placedDate":"2017-05-21T20:04:13.000Z","matchedDate":"2017-05-21T20:05:01.000Z","averagePriceMatched":3.7,"sizeMatched":2.0,"sizeRemaining":0.0,"sizeLapsed":0.0,"sizeCancelled":0.0,"sizeVoided":0.0,"regulatorCode":"GIBRALTAR REGULATOR"}
-	'''
 	
 	orderList = [] 
 	

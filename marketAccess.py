@@ -207,53 +207,5 @@ def populatePrice( marketObject, marketType) :
 
 #--------------------------------------------------------
 
-'''
-Task 5:
-	get correct score information for all runners for given event
-	use getMarketCatalogue to runners: list< RunnerCatalogue >
-	from runners, get selectionId and runnerName
-	
-	then task 6 to add price information for each one using getMarketBook
 
-def getCorrectScoreCatalogue( eventId, marketType ):
-	
-
-	#turn eventList into proper formatted list
-	numberEvents = len(setOfEvents)
-	eventString = ""
-	for eventId in setOfEvents :
-		eventString += '\"'
-		eventString += str(eventId)
-		eventString += '\"'
-		if eventId  != setOfEvents[numberEvents-1] :
-			eventString += ',' 
-	
-
-	marketCat = foxyBotLib.listMarketCatalogue( str(eventId), 1, foxyGlobals.correctScore )
-	
-	if marketCat == 0:
-		return 0
-	
-	print( "marketCat: " + str(marketCat ))
-	
- 
-	
-	myDict = {}
-	for market in marketCat:
-		marketId = market['marketId']
-		myDict[ marketId ] = market[ 'totalMatched' ]
-	
-	print("These market ID's found (ID, volume, name) ")
-	marketList = [] 
-	for id in myDict :
-		name = foxyBotLib.getEventNameFromMarketId(id)
-		print( '\t' + str( id ) + " :\t" + str(myDict[id] )  + " :\t" + name )
-		newObject =  marketClass.Market( id, name )
-		newObject.volume = myDict[ id ]
-		if newObject.volume >= foxyGlobals.minVolume :
-			marketList.append( newObject  )
-		
-	return marketList
-	return
-	'''
 	

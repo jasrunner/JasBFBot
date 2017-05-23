@@ -119,7 +119,6 @@ def soccerMenu( args ):
 		
 	elif choice.lower() == '2' :
 		bestMarkets = callCorrectScoreQuery( setOfEvents )
-		# add 'if' here, i.e. if more than 0 best amrkets, do 30, else do 20
 		choice = '30'
 		
 	elif choice.lower() == '3' :
@@ -301,7 +300,7 @@ def callMatchOddsQuery(setOfEvents):
 	
 	# This is now the largest match odds markets
 	print('marketObjects = ' + str( bestMarkets) )
-	print(bestMarkets)
+	#print(bestMarkets)
 	
 	return bestMarkets
 	
