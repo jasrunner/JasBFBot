@@ -55,12 +55,19 @@ def exec_menu(choice, args):
 def accountsMenu( args ):
 	print( "\n========\nAccounts\n--------\n" )
 	print( "1. Summary" )
+	print( "2. List current orders")
 	print( "9. Back" )
 	print( "0. Quit" )
 	choice = input(" >>  ")
 
 	if choice.lower() == '1' :
 		choice = '10'
+		
+	if choice.lower() == '2' :
+
+		choice = '11'
+		
+		
 	exec_menu(choice, '')
 	return
  
@@ -69,20 +76,20 @@ def accountsMenu( args ):
 # Menu 2
 def sportsMenu( args ):
 	print( "\n======\nSports\n------\n" )
-	print( "S. Soccer" )
-	print( "T. Tennis" )
-	print( "C. Cricket" )
+	print( "1. Soccer" )
+	print( "2. Tennis" )
+	print( "3. Cricket" )
 	print( "9. Back" )
 	print( "0. Quit" )
 	choice = input(" >>  ")
 	
-	if choice.lower() == 's' :
+	if choice.lower() == '1' :
 		choice = '20'	
 		sportsMarket = 'Soccer'
-	elif choice.lower() == 't' :
+	elif choice.lower() == '2' :
 		choice = '21'
 		sportsMarket = 'Tennis'
-	elif choice.lower() == 'c' :
+	elif choice.lower() == '3' :
 		choice = '22'
 		sportsMarket = 'Cricket'
 	exec_menu(choice, sportsMarket)
@@ -144,12 +151,11 @@ def bettingMenu( args ):
 		print( "you chose to place a bet" )
 		callPlaceABet( args )
 		choice = '30'
-	if choice.lower() == '3' :
-		print( "Lay. Bet : enter amount")
-		amount = input( " >>  ")
-		print( "Lay Bet : enter odds")
-		odds = input( " >>  ")
-		callLayABet( )
+	if choice.lower() == '2' :
+		print( "you chose listCurrentOrders")
+		choice = '30'
+		callListCurrentOrders( args )
+		
 		
 	exec_menu(choice, '')
 	
@@ -182,8 +188,16 @@ def exit( args ):
 #--------------------------------------------------------
 def accountSummary( args ):
 	accountAccess.getCurrentAccountDetails()
-	back( args )
+	exec_menu('1', args)
+	#back( args )
 	
+#--------------------------------------------------------
+def currentBetList( args ):
+	orderList = orders.listCurrentOrders()
+	print('List of Orders: ' + str(orderList))	
+	exec_menu('1', args)
+	#back( args )
+
 
 #--------------------------------------------------------
 def loadFromFile( args ) :
@@ -205,12 +219,37 @@ def callPlaceABet(args) :
 		print('Nothing found that satisfies criteria')
 		back(args)
 	
-	market = args[0]
-	print(market)
-	orders.makeABet(market)
+	print('length of marketList is ' + str(len(args)))
+	
+	orderList = orders.listCurrentOrders()	
+	
+	for market in args :
+	
+		# if there are existing orders, 
+		# check if we already have a bet on this market:		
+		if orderList != [] :	
+			
+			if any( x for x in orderList if x.marketId == market.id ) :
+				print('already exists, cant bet on this market')
+
+			else :
+				print(market)	
+				orders.makeABet(market)
+				return
+		
+		#	else no existing bets so go ahead and make one
+		else :
+			print(market)	
+			orders.makeABet(market)
+			return
+			
 	
 	back(args)
+
 	
+	
+	
+			
 '''
 =======================================================================
 
@@ -376,6 +415,7 @@ menu_actions = {
 	'3': loadFromFile,
 	'4': testMenu,
 	'10': accountSummary,
+	'11': currentBetList,
 	'20': soccerMenu,
 	'21': matchOdds,
 	'30': bettingMenu,

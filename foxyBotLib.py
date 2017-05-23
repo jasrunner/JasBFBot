@@ -71,22 +71,7 @@ def getAccountFunds():
 #--------------------------------------------------------  
 # Sports
 #--------------------------------------------------------
-'''
-        "params": {
-            "marketId": "1.109850906",
-            "instructions": [
-                {
-                    "selectionId": "237486",
-                    "handicap": "0",
-                    "side": "LAY",
-                    "orderType": "LIMIT",
-                    "limitOrder": {
-                        "size": "2",
-                        "price": "3",
-                        "persistenceType": "LAPSE"
-                    }
-                }
-'''
+
 def placeOrders(marketVersion, marketId, selectionId, betAmount, betOdds, side ):
 	
 	params = '"marketId":"' + marketId + '" '
@@ -109,6 +94,17 @@ def placeOrders(marketVersion, marketId, selectionId, betAmount, betOdds, side )
 
 	return listEventsLoads['result']
 
+
+#--------------------------------------------------------
+def listCurrentOrders( ):
+	
+	response = callAping( sports, "listCurrentOrders", "" )
+	loads = json.loads(response)
+	
+	print('response = ')
+	print(response)
+
+	return loads['result']
 
 #--------------------------------------------------------
 def getEventTypes():

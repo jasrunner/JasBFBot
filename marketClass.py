@@ -43,9 +43,10 @@ class Market (object):
 		self.name 			= 'not defined'
 		self.volume 		= 0
 		self.numberOfRunners = 0
-		self.price = []
-		self.currentScore = 'not defined'
-		self.viable = False
+		self.price           = []
+		self.currentScore    = 'not defined'
+		self.viable          = False
+		self.betId           = 0
 
 		
 	def __repr__( self ) :
@@ -60,6 +61,7 @@ class Market (object):
 			\t	Current Score 	{}
 			\t	Viable 	{}
 			\t	Price :		{}
+			\t  Bet ID :  {}
 			'''.format ( 
 				#self.__class__.__name__,
 				self.id ,
@@ -71,7 +73,8 @@ class Market (object):
 				self.currentScore ,
 				self.viable ,
 				#priceInfo
-				self.price
+				self.price ,
+				self.betId
 			)
 			
 	
@@ -91,6 +94,7 @@ class Market (object):
 			\t	Current Score 	{}
 			\t	Viable 			{}
 			\t  Selection		{}
+			\t  Bet ID:   {}
 			'''.format ( 
 				self.id ,
 				self.version ,
@@ -99,7 +103,8 @@ class Market (object):
 				self.volume ,
 				self.currentScore ,
 				self.viable ,
-				selection
+				selection ,
+				self.betId
 			)	
 	
 def getkeyByVolume ( Market ) :
