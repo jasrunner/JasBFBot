@@ -63,11 +63,13 @@ def makeABet( market ) :
 	elif orderStatus == 'EXECUTABLE' :
 		print('Bet wasnt executed, wait 10 seconds then kill it')
 		
-		betId = ret['betId']
-		print( 'betId is: ' + betId )
-		market.betId = betId
+		betId = ret['instructionReports'][0]['betId']
 		
-		time.sleep(10)
+		print( 'betId is: ' + betId )
+		
+		cancelOrderRet = foxyBotLib.cancelOrder( str( market.id ), betId )
+		print( cancelOrderRet )
+		#time.sleep(10)
 		
 		#need to use betId, marketId, selectionId to get current status
 		

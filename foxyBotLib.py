@@ -92,7 +92,23 @@ def placeOrders(marketVersion, marketId, selectionId, betAmount, betOdds, side )
 
 	return listEventsLoads['result']
 
-
+#--------------------------------------------------------
+def cancelOrder( marketId, betId ):
+	
+	print('In cancelOrder')
+	
+	params = '"marketId":"' + marketId + '" '
+	params += ', "instructions": [ { "betId": "' + betId
+	params += ' }] '
+	
+	response = callAping( sports, "cancelOrders", params )
+	loads = json.loads(response)
+	
+	print('cancelOrders response = ')
+	print(loads)
+	
+	return loads
+	
 #--------------------------------------------------------
 def listCurrentOrders( ):
 	
