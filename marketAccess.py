@@ -1,3 +1,4 @@
+import sys
 import foxyBotLib
 import foxyGlobals
 import marketClass
@@ -29,6 +30,8 @@ def getInplayMarkets( queryText ) :
 	Find market ID's for the set of event ID's
 	and market type (match odds, correct score, etc)
 	Return : dictionary of {marketId : volumeTraded}
+	
+	now= returns a list of market Ids.  i.e. has converted events into market ids. 
 '''
 def getInplayMarketVols( setOfEvents, marketType ):
 	
@@ -42,24 +45,15 @@ def getInplayMarketVols( setOfEvents, marketType ):
 	if marketCat == 0:
 		return 0
 	
+	marketIdList = []
 	# Extract market ID's for target events
 	myDict = {}
-	for market in marketCat:
-		marketId = market['marketId']
-		myDict[ marketId ] = market[ 'totalMatched' ]
-	
-	# create a list of Market objects for those satisfying min volume 
-	# populate just the volume and market id 
-	marketList = [] 
-	for id in myDict :
-		if myDict[ id ] :
-			#name = foxyBotLib.getEventNameFromMarketId(id)
-			newObject =  marketClass.Market( id, marketType )
-			newObject.volume = myDict[ id ]
-			marketList.append( newObject  )
-	
+	for market in marketCat :
+		marketIdList.append ( market['marketId'] )
+		
+
 	#print('market!ist. ' + str(marketList))		
-	return marketList
+	return marketIdList
 
 
 
@@ -121,39 +115,67 @@ def getBestOdds( runner) :
 	
 	
 #--------------------------------------------------------
-def getSelections ( marketId, marketType ):
+# getSelections now works with a list of marketIds for input,
+# and returns list of marketObjects
+def getSelections ( marketIds, marketType ):
 	
-	selections = foxyBotLib.listMarketBook( marketId )
-	#print(selections)
+	print('getSelections')
+	
+	# clever python makes csv creation easy ! 
+	s='","'
+	marketIdString='"' + s.join(marketIds) + '"'
+	
+	print('market id string = ')
+	print(marketIdString)
+	selections = foxyBotLib.listMarketBook( marketIdString )
+	print(selections)
 	#if not 
 	if not selections :
 		print( 'no results from marketId')
 		return 
-		
-	numberOfRunners = selections[0]['numberOfRunners'] 
-	version = selections[0]['version']
 	
-	#print( 'selections[0] = ' + str(selections[0] ))
+	results = []
 	
-	selectionList = 0
-	if marketType == foxyGlobals.correctScore :
-		selectionList = foxyGlobals.scoreLine
-	elif marketType == foxyGlobals.matchOdds :
-		selectionList = foxyGlobals.matchOutcome
+	# each selection maps onto a market object
+	for selection in selections :
+	# here we can get market ID - changing for multiples in one call.
+
+		marketId			  = selection['marketId']
+		newObject = marketClass.Market( marketId, foxyGlobals.correctScore )
+
+		newObject.numberOfRunners = selection['numberOfRunners'] 
+		newObject.version         = selection['version']
+		newObject.totalMatched    = selection['totalMatched']
+		newObject.betDelay        = selection['betDelay']	
+		newObject.status          = selection['status']
 		
-	prices = []
+		runners         = selection['runners'] 
 	
-	runners = selections[0]['runners'] 
-	count = 0
-	for runner in runners :
-		selectionId = runner['selectionId']
-		odds =   getBestOdds( runner ) 
-		newPrice = marketClass.Price(odds, selectionId)
-		newPrice.score = selectionList[ count ] 
-		prices.append(newPrice)
-		count += 1
 		
-	return (version, prices)
+		#print( 'selections[0] = ' + str(selections[0] ))
+		
+		selectionList = 0
+		if marketType == foxyGlobals.correctScore :
+			selectionList = foxyGlobals.scoreLine
+		elif marketType == foxyGlobals.matchOdds :
+			selectionList = foxyGlobals.matchOutcome
+			
+		prices = []
+		
+		
+		count = 0
+		for runner in runners :
+			selectionId = runner['selectionId']
+			odds =   getBestOdds( runner ) 
+			newPrice = marketClass.Price(odds, selectionId)
+			newPrice.score = selectionList[ count ] 
+			prices.append(newPrice)
+			count += 1
+			
+		newObject.price = prices
+		results.append(newObject)
+		
+	return ( results )
 		
 	
 #--------------------------------------------------------
@@ -163,46 +185,85 @@ def getSelections ( marketId, marketType ):
 '''
 def getMarketInfo( setOfEvents, marketType ) :
 	
-	dictOfMarketObjects = getInplayMarketVols( setOfEvents, marketType )
-	if dictOfMarketObjects == 0 :
+	print('getMarketInfo')
+	
+	marketIdList = getInplayMarketVols( setOfEvents, marketType )
+	if marketIdList == 0 :
 		print('Exiting')
 		sys.exit(0)
-	marketIdCount = str(len(dictOfMarketObjects))
+	marketIdCount = len(marketIdList)
 
 		
 	print('___________________')	
-	print( 'List of ' + marketIdCount + ' markets above min volume size (' + str(foxyGlobals.minVolume) + '), ordered by volume')
+	#print( 'List of ' + marketIdCount + ' markets above min volume size (' + str(foxyGlobals.minVolume) + '), ordered by volume')
 	
 	if marketIdCount == 0 :
-		print( 'Exiting ')
+		print( 'Exiting as no marketIds found (getMarketInfo) ')
 		sys.exit (0)
 	
-	sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
+	print( 'Number of market Ids found = ' + str(marketIdCount ) )
+	return marketIdList
+	#sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
 	
-	return sortedDictOfMarketObjects
+	#return sortedDictOfMarketObjects
 
 	
 	
 #--------------------------------------------------------
 '''
-	common code that gets Price info for given market object
-	Return: market object
+	Input: list of market Id's
+	Output: llst of market objects
+	
+	nb: broke request down into blocksize to fix:
+	 'error': {'message': 'ANGX-0001', 'code': -32099, 'data': {'exceptionname': 'APINGException', 'APINGException': {'errorDetails': '', 'requestUUID': 'prdang005-04180837-00eecb297c', 'errorCode': 'TOO_MUCH_DATA'}}}}
 '''
-def populatePrice( marketObject, marketType) :
+#jas: todo 
+def populatePrice( marketIdList, marketType) :
+	
+	print('populatePrice')
 	
 	
-	selections = getSelections(
-				marketObject.id, 
-					marketType
-	)
-	marketObject.price = selections[1]
-	marketObject.version = selections[0]
+	# split here
+	
+	length = len(marketIdList)
+	
+	#if len(marketIdList) > foxyGlobals.priceRequestLimit )
+	blockSize = 5
+	count = 0
+	selections = []
+	while (count + blockSize) < length :
+		
+		selections.extend ( getSelections(
+				marketIdList[count:(count+blockSize)], 
+				marketType
+		) )
+		count += blockSize
+	
+	if count < length :
+		selections.extend ( getSelections(
+				marketIdList[count:], 
+				marketType
+		) )
 
-	marketObject.numberOfRunners = len(marketObject.price)
-	marketObject.name = foxyBotLib.getEventNameFromMarketId(marketObject.id)
 	
+	
+	print('number selections = ' + str(len(selections)))
+	#print(str(selections))
+	
+	# now match each market id and populate...
+	
+	#marketObject.price = selections[1]
+	#marketObject.version = selections[0]
 
-	return marketObject
+	#marketObject.numberOfRunners = len(marketObject.price)
+	
+	# lets restrict this to just the ones we want to bet on
+	# if la-di-dah
+	#getSelections[0].name = foxyBotLib.getEventNameFromMarketId(marketObject.id)
+	# todo ! ! ! 
+
+	return selections
+
 
 
 #--------------------------------------------------------

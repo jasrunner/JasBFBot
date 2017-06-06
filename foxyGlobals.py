@@ -5,6 +5,7 @@ urlAccounts = "https://api.betfair.com/exchange/account/json-rpc/v1"
 headers = ""
 
 requestLimit = 1000
+# 1000
 
 # The minumum traded volume to gauge the size of the market
 minVolume = 10000
@@ -12,6 +13,9 @@ minVolume = 10000
 # max and min back odds
 maxBackOdds		= 4.5
 minBackOdds		= 1.7
+
+# bet delay
+betDelay = 5
 
 # minimum bet
 minBetSize = 2

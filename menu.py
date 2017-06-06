@@ -7,6 +7,7 @@ import marketAccess
 import orders
 import foxyGlobals
 import fileOperations
+import foxyBotLib
 
 # Main definition - constants
 menu_actions  = {}  
@@ -212,7 +213,7 @@ def loadFromFile( args ) :
 
 #--------------------------------------------------------		
 def callPlaceABet(args) :
-	print("calling out to betting function here for first item only")
+	print("calling out to betting function, max 5 bets")
 	
 	if args == [] :
 		print('Nothing found that satisfies criteria')
@@ -221,6 +222,9 @@ def callPlaceABet(args) :
 	print('length of marketList is ' + str(len(args)))
 	
 	orderList = orders.listCurrentOrders()	
+	
+	limit = 5
+	counter = 0
 	
 	for market in args :
 	
@@ -233,15 +237,21 @@ def callPlaceABet(args) :
 
 			else :
 				print(market)	
-				orders.makeABet(market)
-				return
+				success = orders.makeABet(market)
+				#return
 		
 		#	else no existing bets so go ahead and make one
 		else :
 			print(market)	
-			orders.makeABet(market)
-			return
-			
+			success = orders.makeABet(market)
+			#return
+		
+		if success == 'SUCCESS' :
+			++counter
+		
+			if counter == limit :
+				print('Reached bet limit, returning')
+				return
 	
 	back(args)
 
@@ -295,11 +305,12 @@ def callMatchOddsQuery(setOfEvents):
 	
 	bestMarkets = marketObjects[:limit]
 	
-	for i in bestMarkets  :
-		i = marketAccess.populatePrice( i, foxyGlobals.matchOdds )
+	#for i in bestMarkets  :
+	#	i = marketAccess.populatePrice( i, foxyGlobals.matchOdds )
+	marketAccess.populatePrice( bestMarkets, foxyGlobals.matchOdds )
 	
 	# This is now the largest match odds markets
-	print('marketObjects = ' + str( bestMarkets) )
+	print('marketObjects[0] = ' + str( bestMarkets[0]) )
 	#print(bestMarkets)
 	
 	return bestMarkets
@@ -316,22 +327,30 @@ def callMatchOddsQuery(setOfEvents):
 def callCorrectScoreQuery( setOfEvents ):
 
 	print('callCorrectScoreQuery')
-	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
+	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
 	
-	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+	limit = min(foxyGlobals.priceRequestLimit, len(marketIdList))
+	print('limit = ' + str(limit))
 		
 	#print('marketObjects = ' + str( marketObjects) )
 	
 	bestMarkets = []
+	excludedMarkets = []
+	
+	# jas: todo
+	marketObjects = marketAccess.populatePrice( marketIdList, foxyGlobals.correctScore )
+	
+	print('number of marketObjects = ' + str(len(marketObjects)))
+	# now marketObjects should be populated
 	
 	# Limit number of markets we want to investigate
-	counter = 0
-	i = 0
-	while counter < limit and i < len(marketObjects) :
-		
-		marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
+	#counter = 0
+	#i = 0
+	#while counter < limit and i < len(marketObjects) :
+	for marketObject in marketObjects :	
+		#marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
 	
-		selections = marketObjects[i].price
+		selections = marketObject.price
 		
 		# this finds all the non-negative selections that are in the target group
 		shortlist = [
@@ -340,13 +359,14 @@ def callCorrectScoreQuery( setOfEvents ):
 				]
 			
 		current_score = 'not defined'	
-		viable = False
+		viable = True
+		#exclusion = 'Spread is negative: ' + str()
 	
 		
 		# take a copy of TargetScores
 		copyTarget = foxyGlobals.targetScores[:]
 
-		
+		exclusion = ''
 		loop = True
 		while loop :
 			t = copyTarget.pop(0)
@@ -357,25 +377,57 @@ def callCorrectScoreQuery( setOfEvents ):
 				if t == s.score :
 					current_score = t
 					loop = False
-					if s.backPrice < foxyGlobals.maxBackOdds and s.backPrice > foxyGlobals.minBackOdds : 
-						if s.spread < foxyGlobals.maxSpread :
-							viable = True
-							counter += 1				
-					break
+					if s.backPrice > foxyGlobals.maxBackOdds or s.backPrice < foxyGlobals.minBackOdds : 
+						viable = False
+						exclusion = 'Back price out of bounds: ' 
+						break
 		
-		
-
+					if s.spread > foxyGlobals.maxSpread :
+						viable = False
+						exclusion = 'Spread too large'
+						print(exclusion)
+						print(s.spread)
+						print(foxyGlobals.maxSpread)
+						break
+				#counter += 1
+				
+		if marketObject.totalMatched  < foxyGlobals.minVolume :
+			viable = False
+			exclusion = 'Volume too small'	
+			
+			
+		elif marketObject.status != 'OPEN' :
+			viable = False
+			exclusion = 'Market not open'
+			
+		elif marketObject.betDelay > foxyGlobals.betDelay :
+			viable = False
+			exclusion = 'Delay too large'
+			
 		# record if this is viable
-		marketObjects[i].currentScore = current_score
-		marketObjects[i].viable = viable
+		marketObject.currentScore = current_score
+		marketObject.viable = viable
+		marketObject.exclusion = exclusion
 
 		if viable == True :
-			bestMarkets.append( marketObjects[i] )
+			bestMarkets.append( marketObject )
+			print('viable')
+		else :
+			excludedMarkets.append( marketObject )
+			print('not viable')
 
-		i += 1
+		#i += 1
 		
 	# this calls the __str__ version to output user info 
+	print('BestMarkets:')
+	print('___________________')
 	for i in bestMarkets :
+		i.name = foxyBotLib.getEventNameFromMarketId( i.id )
+		print( str(i) )
+	
+	print('ExcludedMarkets:')
+	print('___________________')
+	for i in excludedMarkets :
 		print( str(i) )
 		
 	return bestMarkets

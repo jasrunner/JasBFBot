@@ -14,8 +14,8 @@ class Price (object):
 			\t	  Score :          {}
 			\t	  Lay Price :		    {}
 			\t	  Back Price :		{} 
-			\t    Spread : 			{}
-			\t    Selection Id : 	{}
+			\t     Spread : 			{}
+			\t     Selection Id : 	{}
 			'''.format ( 
 				self.score ,
 				self.layPrice ,
@@ -39,6 +39,10 @@ class Market (object):
 		self.price           = []
 		self.currentScore    = 'not defined'
 		self.viable          = False
+		self.exclusion       = 'not defined'
+		self.totalMatched    = 0
+		self.betDelay        = 0
+		self.status          = ''
 
 		
 	def __repr__( self ) :
@@ -50,8 +54,12 @@ class Market (object):
 			\t	Name: 				{} 
 			\t	Volume: 			{}
 			\t	Number Of Runners: {}
-			\t	Current Score 	{}
-			\t	Viable 	{}
+			\t	Current Score: 	{}
+			\t	Viable: 	{}
+			\t	Exclusion: {}
+			\t	Total Matched: {}
+			\t	Bet Delay: 	{}
+			\t	Status:	{}
 			\t	Price :		{}
 			'''.format ( 
 				#self.__class__.__name__,
@@ -63,8 +71,13 @@ class Market (object):
 				self.numberOfRunners ,
 				self.currentScore ,
 				self.viable ,
+				self.exclusion ,
+				self.totalMatched ,
+				self.betDelay ,
+				self.status ,
 				#priceInfo
 				self.price
+				
 			)
 			
 	
@@ -79,8 +92,12 @@ class Market (object):
 			\t	Market Type:		{}
 			\t	Name: 				{} 
 			\t	Volume: 			{}
-			\t	Current Score 	{}
-			\t	Viable 			{}
+			\t	Current Score: 	{}
+			\t	Viable: 			{}
+			\t  Exclusion:   {}
+			\t	Total Matched: 	{}
+			\t	Bet Delay: 			{}
+			\t	Status:					{}
 			\t  Selection		{}
 			'''.format ( 
 				self.id ,
@@ -90,6 +107,10 @@ class Market (object):
 				self.volume ,
 				self.currentScore ,
 				self.viable ,
+				self.exclusion ,
+				self.totalMatched ,
+				self.betDelay ,
+				self.status ,
 				selection 
 			)	
 	

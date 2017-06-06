@@ -99,15 +99,16 @@ def cancelOrder( marketId, betId ):
 	
 	params = '"marketId":"' + marketId + '" '
 	params += ', "instructions": [ { "betId": "' + betId
-	params += ' }] '
+	params += '" }] '
 	
+	print('params: ' + params)
 	response = callAping( sports, "cancelOrders", params )
 	loads = json.loads(response)
 	
 	print('cancelOrders response = ')
 	print(loads)
 	
-	return loads
+	return loads['result']
 	
 #--------------------------------------------------------
 def listCurrentOrders( ):
@@ -195,17 +196,18 @@ def listMarketCatalogueInPlay( queryText ) :
 	
 	
 #--------------------------------------------------------
-def listMarketBook( marketId ) :
+def listMarketBook( marketIds ) :
 	
-	params = ' "marketIds":[ "' + marketId + '"] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
-	
+	params = ' "marketIds":[ ' + marketIds + '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
+	print('params = ')
+	print(params)
 	#{"marketIds":["' + marketId + '"],"priceProjection":{"priceData":["EX_BEST_OFFERS"]}}, "id": 1}'
 	
-	#print ('Calling listMarketBook to get price information')
+	print ('Calling listMarketBook to get price information')
 	listMarketResponse = callAping( sports, "listMarketBook", params )
 	listMarketLoads = json.loads(listMarketResponse)
-#	print('___________________')
-	#print(listMarketLoads)
+	print('___________________')
+	print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 #--------------------------------------------------------

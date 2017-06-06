@@ -118,7 +118,7 @@ def calculateLayStake( backOdds, backStake ) :
 
 def testCalculateLayStake() :
 
-	backOdds 	= Decimal(1.9)
+	backOdds 	= Decimal(4.4)
 	backStake = Decimal(2.0)
 		
 	layBet 	= calculateLayStake( backOdds, backStake )
