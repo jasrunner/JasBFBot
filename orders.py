@@ -119,6 +119,8 @@ def makeABet( market ) :
 	print('in Orders')
 	selection = next( ( x for x in market.price if x.score == market.currentScore), None )
 	
+	# todo : backPrice is none - why? check
+	
 	backOdds = selection.backPrice
 	backStake = foxyGlobals.minBetSize
 	
