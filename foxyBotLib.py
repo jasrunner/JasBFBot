@@ -38,7 +38,7 @@ def callAping( requestType, query, params ):
 			return jsonResponse.decode('utf-8')
 		except urllib.error.URLError as e:
 			print (e.reason) 
-			print ('Oops no service available at ' + str(foxyGlobals.url))
+			print ('Oops no service available at ' + str(url))
 			exit()
 		except urllib.error.HTTPError:
 			print ('Oops not a valid operation from the service ' + str(foxyGlobals.url))
@@ -72,6 +72,56 @@ def getAccountFunds():
 # Sports
 #--------------------------------------------------------
 
+def placeOrders(marketVersion, marketId, selectionId, betAmount, betOdds, side ):
+	
+	params = '"marketId":"' + marketId + '" '
+	params += ', "instructions": [ { "selectionId": "' + selectionId
+	params += '",  "side": "'
+	params += side
+	params += '", "orderType": "LIMIT", "limitOrder":{"size":"' + betAmount
+	params += '", "price":"' + betOdds + '", "persistenceType":"LAPSE"}}] '
+	params += ', "version":' + marketVersion 
+	
+	#print('params : ' + params)
+	
+	listEventsResponse = callAping( sports, "placeOrders", params )
+	listEventsLoads = json.loads(listEventsResponse)
+	
+	print('response = ')
+	print(listEventsLoads)
+
+	return listEventsLoads['result']
+
+#--------------------------------------------------------
+def cancelOrder( marketId, betId ):
+	
+	print('In cancelOrder')
+	
+	params = '"marketId":"' + marketId + '" '
+	params += ', "instructions": [ { "betId": "' + betId
+	params += '" }] '
+	
+	print('params: ' + params)
+	response = callAping( sports, "cancelOrders", params )
+	loads = json.loads(response)
+	
+	print('cancelOrders response = ')
+	print(loads)
+	
+	return loads['result']
+	
+#--------------------------------------------------------
+def listCurrentOrders( ):
+	
+	response = callAping( sports, "listCurrentOrders", "" )
+	loads = json.loads(response)
+	
+	#print('response = ')
+	#print(response)
+
+	return loads['result']
+
+#--------------------------------------------------------
 def getEventTypes():
     params = '"filter":{"textQuery":"Tennis","inPlayOnly":true}'
     
@@ -146,17 +196,18 @@ def listMarketCatalogueInPlay( queryText ) :
 	
 	
 #--------------------------------------------------------
-def listMarketBook( marketId ) :
+def listMarketBook( marketIds ) :
 	
-	params = ' "marketIds":[ "' + marketId + '"] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
-	
+	params = ' "marketIds":[ ' + marketIds + '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
+	print('params = ')
+	print(params)
 	#{"marketIds":["' + marketId + '"],"priceProjection":{"priceData":["EX_BEST_OFFERS"]}}, "id": 1}'
 	
-	#print ('Calling listMarketBook to get price information')
+	print ('Calling listMarketBook to get price information')
 	listMarketResponse = callAping( sports, "listMarketBook", params )
 	listMarketLoads = json.loads(listMarketResponse)
-#	print('___________________')
-	#print(listMarketLoads)
+	print('___________________')
+	print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 #--------------------------------------------------------

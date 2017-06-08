@@ -4,8 +4,10 @@ import sys, os
 
 import accountAccess
 import marketAccess
+import orders
 import foxyGlobals
 import fileOperations
+import foxyBotLib
 
 # Main definition - constants
 menu_actions  = {}  
@@ -28,6 +30,7 @@ def mainMenu( args ):
 	print( "1. Accounts" )
 	print( "2. Sports" )
 	print( "3. Load from file" )
+	print( "4. Test " )
 	print( "\n0. Quit" )
 	choice = input(" >>  ")
 	exec_menu( choice, '')
@@ -53,12 +56,19 @@ def exec_menu(choice, args):
 def accountsMenu( args ):
 	print( "\n========\nAccounts\n--------\n" )
 	print( "1. Summary" )
+	print( "2. List current orders")
 	print( "9. Back" )
 	print( "0. Quit" )
 	choice = input(" >>  ")
 
 	if choice.lower() == '1' :
 		choice = '10'
+		
+	if choice.lower() == '2' :
+
+		choice = '11'
+		
+		
 	exec_menu(choice, '')
 	return
  
@@ -67,20 +77,20 @@ def accountsMenu( args ):
 # Menu 2
 def sportsMenu( args ):
 	print( "\n======\nSports\n------\n" )
-	print( "S. Soccer" )
-	print( "T. Tennis" )
-	print( "C. Cricket" )
+	print( "1. Soccer" )
+	print( "2. Tennis" )
+	print( "3. Cricket" )
 	print( "9. Back" )
 	print( "0. Quit" )
 	choice = input(" >>  ")
 	
-	if choice.lower() == 's' :
+	if choice.lower() == '1' :
 		choice = '20'	
 		sportsMarket = 'Soccer'
-	elif choice.lower() == 't' :
+	elif choice.lower() == '2' :
 		choice = '21'
 		sportsMarket = 'Tennis'
-	elif choice.lower() == 'c' :
+	elif choice.lower() == '3' :
 		choice = '22'
 		sportsMarket = 'Cricket'
 	exec_menu(choice, sportsMarket)
@@ -110,7 +120,7 @@ def soccerMenu( args ):
 		
 	elif choice.lower() == '2' :
 		bestMarkets = callCorrectScoreQuery( setOfEvents )
-		choice = '20'
+		choice = '30'
 		
 	elif choice.lower() == '3' :
 		print( "Enter Filename, " + foxyGlobals.defaultFilename + " is default)" )
@@ -118,34 +128,52 @@ def soccerMenu( args ):
 		fileOperations.saveToFile( args, filename )
 		choice = '20'
 	
-	print('best markets = ' + str( bestMarkets ) )
+	#print('best markets = ' + str( bestMarkets ) )
 			
 	exec_menu(choice, bestMarkets)
 	
 	return
 #--------------------------------------------------------
 # Menu 4
-'''
-def saveMenu( args ):
+
+def bettingMenu( args ):
 	
 	
-	print( "\n======\nSave\n------\n" )
+	print( "\n===========\nBettingMenu\n---------\n" )
 	
+	print( "1. Place a bet")
+	print( "2. List current orders")
 	print( "9. Back" )
 	print( "0. Quit" )
 	choice = input(" >>  ")
 	
 	if choice.lower() == '1' :
-		print( "Enter Filename, " + foxyGlobals.defaultFilemame + " is default)" )
-		filename = input(" >> " )
-		savetoFile( args, filename )
-		choice = '20'
+		print( "you chose to place a bet" )
+		callPlaceABet( args )
+		choice = '30'
+	if choice.lower() == '2' :
+		print( "you chose listCurrentOrders")
+		choice = '30'
+		callListCurrentOrders( args )
 		
 		
 	exec_menu(choice, '')
 	
 	return
-'''
+
+#--------------------------------------------------------
+# Menu 5
+def testMenu( args ):
+	print( "\n========\nTest Menu\n--------\n" )
+	print( "1. Run Correct Score test" )
+	print( "9. Back" )
+	print( "0. Quit" )
+	choice = input(" >>  ")
+
+	if choice.lower() == '1' :
+		testCorrectScore( args )
+	exec_menu(choice, '')
+	return
 
 #--------------------------------------------------------
 # Back to main menu
@@ -160,8 +188,16 @@ def exit( args ):
 #--------------------------------------------------------
 def accountSummary( args ):
 	accountAccess.getCurrentAccountDetails()
-	back( args )
+	exec_menu('1', args)
+	#back( args )
 	
+#--------------------------------------------------------
+def currentBetList( args ):
+	orderList = orders.listCurrentOrders()
+	print('List of Orders: ' + str(orderList))	
+	exec_menu('1', args)
+	#back( args )
+
 
 #--------------------------------------------------------
 def loadFromFile( args ) :
@@ -174,7 +210,55 @@ def loadFromFile( args ) :
 	print( loadedData)
 	
 	mainMenu( '' )
+
+#--------------------------------------------------------		
+def callPlaceABet(args) :
+	print("calling out to betting function, max 5 bets")
 	
+	if args == [] :
+		print('Nothing found that satisfies criteria')
+		back(args)
+	
+	print('length of marketList is ' + str(len(args)))
+	
+	orderList = orders.listCurrentOrders()	
+	
+	limit = 5
+	counter = 0
+	
+	for market in args :
+	
+		# if there are existing orders, 
+		# check if we already have a bet on this market:		
+		if orderList != [] :	
+			
+			if any( x for x in orderList if x.marketId == market.id ) :
+				print('already exists, cant bet on this market')
+
+			else :
+				print(market)	
+				success = orders.makeABet(market)
+				#return
+		
+		#	else no existing bets so go ahead and make one
+		else :
+			print(market)	
+			success = orders.makeABet(market)
+			#return
+		
+		if success == 'SUCCESS' :
+			++counter
+		
+			if counter == limit :
+				print('Reached bet limit, returning')
+				return
+	
+	back(args)
+
+	
+	
+	
+			
 '''
 =======================================================================
 
@@ -221,11 +305,13 @@ def callMatchOddsQuery(setOfEvents):
 	
 	bestMarkets = marketObjects[:limit]
 	
-	for i in bestMarkets  :
-		i = marketAccess.populatePrice( i, foxyGlobals.matchOdds )
+	#for i in bestMarkets  :
+	#	i = marketAccess.populatePrice( i, foxyGlobals.matchOdds )
+	marketAccess.populatePrice( bestMarkets, foxyGlobals.matchOdds )
 	
 	# This is now the largest match odds markets
-	print('marketObjects = ' + str( bestMarkets) )
+	print('marketObjects[0] = ' + str( bestMarkets[0]) )
+	#print(bestMarkets)
 	
 	return bestMarkets
 	
@@ -241,22 +327,30 @@ def callMatchOddsQuery(setOfEvents):
 def callCorrectScoreQuery( setOfEvents ):
 
 	print('callCorrectScoreQuery')
-	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
+	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
 	
-	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
+	limit = min(foxyGlobals.priceRequestLimit, len(marketIdList))
+	print('limit = ' + str(limit))
 		
 	#print('marketObjects = ' + str( marketObjects) )
 	
 	bestMarkets = []
+	excludedMarkets = []
+	
+	# jas: todo
+	marketObjects = marketAccess.populatePrice( marketIdList, foxyGlobals.correctScore )
+	
+	print('number of marketObjects = ' + str(len(marketObjects)))
+	# now marketObjects should be populated
 	
 	# Limit number of markets we want to investigate
-	counter = 0
-	i = 0
-	while counter < limit and i < len(marketObjects) :
-		
-		marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
+	#counter = 0
+	#i = 0
+	#while counter < limit and i < len(marketObjects) :
+	for marketObject in marketObjects :	
+		#marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
 	
-		selections = marketObjects[i].price
+		selections = marketObject.price
 		
 		# this finds all the non-negative selections that are in the target group
 		shortlist = [
@@ -265,13 +359,14 @@ def callCorrectScoreQuery( setOfEvents ):
 				]
 			
 		current_score = 'not defined'	
-		viable = False
+		viable = True
+		#exclusion = 'Spread is negative: ' + str()
 	
 		
 		# take a copy of TargetScores
 		copyTarget = foxyGlobals.targetScores[:]
 
-		
+		exclusion = ''
 		loop = True
 		while loop :
 			t = copyTarget.pop(0)
@@ -282,25 +377,57 @@ def callCorrectScoreQuery( setOfEvents ):
 				if t == s.score :
 					current_score = t
 					loop = False
-					if s.backPrice < foxyGlobals.maxBackOdds and s.backPrice > foxyGlobals.minBackOdds : 
-						if s.spread < foxyGlobals.maxSpread :
-							viable = True
-							counter += 1				
-					break
+					if s.backPrice > foxyGlobals.maxBackOdds or s.backPrice < foxyGlobals.minBackOdds : 
+						viable = False
+						exclusion = 'Back price out of bounds: ' 
+						break
 		
-		
-
+					if s.spread > foxyGlobals.maxSpread :
+						viable = False
+						exclusion = 'Spread too large'
+						print(exclusion)
+						print(s.spread)
+						print(foxyGlobals.maxSpread)
+						break
+				#counter += 1
+				
+		if marketObject.totalMatched  < foxyGlobals.minVolume :
+			viable = False
+			exclusion = 'Volume too small'	
+			
+			
+		elif marketObject.status != 'OPEN' :
+			viable = False
+			exclusion = 'Market not open'
+			
+		elif marketObject.betDelay > foxyGlobals.betDelay :
+			viable = False
+			exclusion = 'Delay too large'
+			
 		# record if this is viable
-		marketObjects[i].currentScore = current_score
-		marketObjects[i].viable = viable
+		marketObject.currentScore = current_score
+		marketObject.viable = viable
+		marketObject.exclusion = exclusion
 
 		if viable == True :
-			bestMarkets.append( marketObjects[i] )
+			bestMarkets.append( marketObject )
+			print('viable')
+		else :
+			excludedMarkets.append( marketObject )
+			print('not viable')
 
-		i += 1
+		#i += 1
 		
 	# this calls the __str__ version to output user info 
+	print('BestMarkets:')
+	print('___________________')
 	for i in bestMarkets :
+		i.name = foxyBotLib.getEventNameFromMarketId( i.id )
+		print( str(i) )
+	
+	print('ExcludedMarkets:')
+	print('___________________')
+	for i in excludedMarkets :
 		print( str(i) )
 		
 	return bestMarkets
@@ -311,7 +438,17 @@ def callCorrectScoreQuery( setOfEvents ):
 	#fileOperations.saveToFile(marketObjects, filename)
 	#fileOperations.loadFromFile(filename)
 	
+
 	
+#--------------------------------------------------------
+def testCorrectScore( args )	 :
+	
+	setOfEvents = getSetOfEvents( 'Soccer' )
+	bestMarkets = callCorrectScoreQuery( setOfEvents )
+	callPlaceABet( bestMarkets )
+	
+		
+	return
 '''
 =======================================================================
 
@@ -327,9 +464,12 @@ menu_actions = {
 	'1': accountsMenu,
 	'2': sportsMenu,
 	'3': loadFromFile,
+	'4': testMenu,
 	'10': accountSummary,
+	'11': currentBetList,
 	'20': soccerMenu,
 	'21': matchOdds,
+	'30': bettingMenu,
 	'9': back,
 	'0': exit,
 }
