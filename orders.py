@@ -33,6 +33,7 @@ def listCurrentOrders(  ) :
 		
 		
 		newObject =  Order( betId, marketId, selectionId, side, status )
+		newObject.name = foxyBotLib.getEventNameFromMarketId( marketId )
 		orderList.append( newObject )
 		
 	return orderList
@@ -222,6 +223,7 @@ class Order (object):
 		self.selectionId  = selectionId
 		self.side 			  = side
 		self.status 		  = status
+		self.name 				= ''
 		
 	def __repr__( self ) :
 		
@@ -231,12 +233,14 @@ class Order (object):
 			\t	SelectionId:		{}
 			\t	Side: 				{} 
 			\t	Status: 			{}
+			\t	Name:					{}
 			'''.format ( 
 				self.betId ,
 				self.marketId ,
 				self.selectionId ,
 				self.side ,
-				self.status
+				self.status,
+				self.name
 			)
 			
 

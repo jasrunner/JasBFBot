@@ -128,12 +128,13 @@ def getSelections ( marketIds, marketType ):
 	print('market id string = ')
 	print(marketIdString)
 	selections = foxyBotLib.listMarketBook( marketIdString )
-	print(selections)
+	#print(selections)
 	#if not 
 	if not selections :
 		print( 'no results from marketId')
 		return 
-	
+	else:
+		print( 'getSelections= number of selections found = ' + str(len(selections ) ) )
 	results = []
 	
 	# each selection maps onto a market object

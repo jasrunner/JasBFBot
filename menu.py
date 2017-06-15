@@ -227,6 +227,8 @@ def callPlaceABet(args) :
 	counter = 0
 	
 	for market in args :
+		
+		success = ''
 	
 		# if there are existing orders, 
 		# check if we already have a bet on this market:		
@@ -329,10 +331,8 @@ def callCorrectScoreQuery( setOfEvents ):
 	print('callCorrectScoreQuery')
 	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
 	
-	limit = min(foxyGlobals.priceRequestLimit, len(marketIdList))
-	print('limit = ' + str(limit))
-		
-	#print('marketObjects = ' + str( marketObjects) )
+	#limit = min(foxyGlobals.priceRequestLimit, len(marketIdList))
+	#print('limit = ' + str(limit))
 	
 	bestMarkets = []
 	excludedMarkets = []
@@ -348,8 +348,11 @@ def callCorrectScoreQuery( setOfEvents ):
 	#i = 0
 	#while counter < limit and i < len(marketObjects) :
 	for marketObject in marketObjects :	
-		#marketObjects[i] = marketAccess.populatePrice( marketObjects[i], foxyGlobals.correctScore )
-	
+		
+		exclusion = ''
+		current_score = 'not defined'	
+		viable = True
+
 		selections = marketObject.price
 		
 		# this finds all the non-negative selections that are in the target group
@@ -357,22 +360,21 @@ def callCorrectScoreQuery( setOfEvents ):
 					selection for selection in selections 
 					if selection.spread > 0 
 				]
-			
-		current_score = 'not defined'	
-		viable = True
-		#exclusion = 'Spread is negative: ' + str()
+		
+		if shortlist == [] :
+			exclusion = 'All spreads are negative'
+			viable = False
 	
 		
 		# take a copy of TargetScores
 		copyTarget = foxyGlobals.targetScores[:]
 
-		exclusion = ''
+		
 		loop = True
 		while loop :
 			t = copyTarget.pop(0)
-			if len(copyTarget) == 0 :
-				loop = False
-			
+
+			# shortList are the possible current scores
 			for s in shortlist :
 				if t == s.score :
 					current_score = t
@@ -385,24 +387,30 @@ def callCorrectScoreQuery( setOfEvents ):
 					if s.spread > foxyGlobals.maxSpread :
 						viable = False
 						exclusion = 'Spread too large'
-						print(exclusion)
-						print(s.spread)
-						print(foxyGlobals.maxSpread)
+						#print(exclusion)
+						#print(s.spread)
+						#print(foxyGlobals.maxSpread)
 						break
-				#counter += 1
 				
-		if marketObject.totalMatched  < foxyGlobals.minVolume :
-			viable = False
-			exclusion = 'Volume too small'	
+			if (loop == True) and  ( len(copyTarget) == 0 ) :
+				exclusion = 'not a target score '
+				viable = False			
+				loop = False
+				
+		if viable == True :		
 			
-			
-		elif marketObject.status != 'OPEN' :
-			viable = False
-			exclusion = 'Market not open'
-			
-		elif marketObject.betDelay > foxyGlobals.betDelay :
-			viable = False
-			exclusion = 'Delay too large'
+			if marketObject.totalMatched  < foxyGlobals.minVolume :
+				viable = False
+				exclusion = 'Volume too small'	
+				
+				
+			elif marketObject.status != 'OPEN' :
+				viable = False
+				exclusion = 'Market not open'
+				
+			elif marketObject.betDelay > foxyGlobals.betDelay :
+				viable = False
+				exclusion = 'Delay too large'
 			
 		# record if this is viable
 		marketObject.currentScore = current_score

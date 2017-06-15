@@ -206,8 +206,8 @@ def listMarketBook( marketIds ) :
 	print ('Calling listMarketBook to get price information')
 	listMarketResponse = callAping( sports, "listMarketBook", params )
 	listMarketLoads = json.loads(listMarketResponse)
-	print('___________________')
-	print(listMarketLoads)
+	#print('___________________')
+	#print(listMarketLoads)
 	return (listMarketLoads['result'])
 	
 #--------------------------------------------------------
