@@ -11,7 +11,7 @@ requestLimit = 1000
 minVolume = 10000
 
 # max and min back odds
-maxBackOdds		= 4.5
+maxBackOdds		= 5.0
 minBackOdds		= 1.7
 
 # bet delay

@@ -172,7 +172,7 @@ def makeABet( market ) :
 			
 			if getBetStatus(betId) == True :
 				print('making lay bet')
-				ret = makeLayBet( backOdds, backStake, market )
+				ret = makeLayBet( backOdds, backStake, market, selection )
 			else :
 				print('cancelling bet')
 			
@@ -191,7 +191,7 @@ def makeABet( market ) :
 					backStake = backStake - sizeCancelled
 					print('orders.makeABet: need to make layBet of ' + str(backStake) + 'to match out')
 					
-					ret = makeLayBet( backOdds, backStake, market )
+					ret = makeLayBet( backOdds, backStake, market, selection )
 	
 
 				# todo : in case of partial cancel, may still need to make matching lay bet
