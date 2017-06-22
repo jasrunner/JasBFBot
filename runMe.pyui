@@ -1,0 +1,34 @@
+[
+  {
+    "class" : "View",
+    "attributes" : {
+      "background_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
+      "tint_color" : "RGBA(0.000000,0.478000,1.000000,1.000000)",
+      "enabled" : true,
+      "border_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
+      "flex" : ""
+    },
+    "frame" : "{{0, 0}, {240, 240}}",
+    "selected" : false,
+    "nodes" : [
+      {
+        "class" : "Button",
+        "attributes" : {
+          "font_size" : 15,
+          "uuid" : "A57B6F8B-164E-4A46-93EC-865F74BBEA11",
+          "flex" : "LRTB",
+          "name" : "button1",
+          "action" : "button_tapped",
+          "class" : "Button",
+          "frame" : "{{80, 104}, {80, 32}}",
+          "title" : "Tap Me!"
+        },
+        "frame" : "{{80, 104}, {80, 32}}",
+        "selected" : true,
+        "nodes" : [
+
+        ]
+      }
+    ]
+  }
+]

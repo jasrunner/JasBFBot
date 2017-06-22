@@ -183,8 +183,8 @@ def makeABet( market ) :
 				report = cancelOrderRet['instructionReports']
 				print( report ) 
 		
-				sizeCancelled =  report[0]['instruction']['sizeCancelled']
-				print( 'sizeCancelled is: ' + sizeCancelled )
+				sizeCancelled =  report[0]['sizeCancelled']
+				print( 'sizeCancelled is: ' + str(sizeCancelled ) )
 
 				 
 				if sizeCancelled != backStake :

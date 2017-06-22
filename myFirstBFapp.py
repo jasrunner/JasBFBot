@@ -58,7 +58,6 @@ Main:
 
 # Parameter check
 
-
 args = len(sys.argv)
 
 if ( args < 3):

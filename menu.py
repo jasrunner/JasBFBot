@@ -1,6 +1,8 @@
 
 # Import the modules needed to run the script.
 import sys, os
+import itertools
+import time
 
 import accountAccess
 import marketAccess
@@ -171,7 +173,7 @@ def testMenu( args ):
 	choice = input(" >>  ")
 
 	if choice.lower() == '1' :
-		testCorrectScore( args )
+		testCorrectScore( 1,0 )
 	exec_menu(choice, '')
 	return
 
@@ -217,7 +219,8 @@ def callPlaceABet(args) :
 	
 	if args == [] :
 		print('Nothing found that satisfies criteria')
-		back(args)
+		#back(args)
+		return (args)
 	
 	print('length of marketList is ' + str(len(args)))
 	
@@ -255,7 +258,8 @@ def callPlaceABet(args) :
 				print('Reached bet limit, returning')
 				return
 	
-	back(args)
+	return(args)
+	#back(args)
 
 	
 	
@@ -450,11 +454,19 @@ def callCorrectScoreQuery( setOfEvents ):
 	
 #--------------------------------------------------------
 def testCorrectScore( args )	 :
+	numberIterations = args[0]
+	delay = args[1]
 	
-	setOfEvents = getSetOfEvents( 'Soccer' )
-	bestMarkets = callCorrectScoreQuery( setOfEvents )
-	callPlaceABet( bestMarkets )
+	for _ in itertools.repeat(None, numberIterations ):
+		
+		print( 'testCorrectScore, loop ' )	
 	
+		setOfEvents = getSetOfEvents( 'Soccer' )
+		bestMarkets = callCorrectScoreQuery( setOfEvents )
+		callPlaceABet( bestMarkets )
+		print('bedore sleep ' + str( time.ctime(time.time())) )
+		time.sleep(delay)
+		print('after sleep ' + str( time.ctime(time.time())) )
 		
 	return
 '''
