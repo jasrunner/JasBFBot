@@ -30,3 +30,12 @@ def loadFromFile( filename ) :
 	#print (unserialized_data)
 	return unserialized_data
 
+
+#--------------------------------------------------------
+
+'''
+example of how to call function:
+	#filename = 'match_odds.pickle'
+	#fileOperations.saveToFile(bestMarkets, filename)
+	#fileOperations.loadFromFile(filename)
+'''
