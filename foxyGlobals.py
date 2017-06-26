@@ -15,7 +15,7 @@ maxBackOdds		= 5.0
 minBackOdds		= 1.7
 
 # bet delay
-betDelay = 5
+betDelay = 6
 
 # minimum bet
 minBetSize = 2

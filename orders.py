@@ -175,6 +175,11 @@ def makeABet( market ) :
 				ret = makeLayBet( backOdds, backStake, market, selection )
 			else :
 				print('cancelling bet')
+				
+				#todo: check here the current back stake, if drifted, then cancel, o
+				# or do we do cancelor-kill?  because sometimes get part cancelled
+				# and need to deal with this
+				
 			
 			
 				cancelOrderRet = foxyBotLib.cancelOrder( str( market.id ), betId )
