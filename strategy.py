@@ -37,6 +37,10 @@ def callMatchOddsQuery(setOfEvents):
 	print( 'callMatchOddsQuery' )
 	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.matchOdds)
 	
+	if marketIdList == [] :
+		print( 'returning from callCorrectScoreQuery')
+		return []
+	
 	limit = min(foxyGlobals.priceRequestLimit, len(marketObjects))
 	
 	bestMarkets = marketObjects[:limit]
@@ -60,8 +64,10 @@ def callCorrectScoreQuery( setOfEvents ):
 	print('callCorrectScoreQuery')
 	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
 	
-	#limit = min(foxyGlobals.priceRequestLimit, len(marketIdList))
-	#print('limit = ' + str(limit))
+	if marketIdList == [] :
+		print( 'returning from callCorrectScoreQuery')
+		return []
+	
 	
 	bestMarkets = []
 	excludedMarkets = []

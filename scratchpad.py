@@ -111,4 +111,26 @@ while 1:
    
 '''
 
+# coding: utf-8
+import ui, time
+v=ui.View()
+b1=ui.Button(title='backgrounded',frame=(10,50,100,50))
+b2=ui.Button(title='not backgrounded',frame=(10,150,100,50))
 
+@ui.in_background
+def b1action(sender):
+   for i in range(6):
+      sender.title=str(i)
+      time.sleep(0.5)
+
+def b2action(sender):
+   # the ui does not update until this method exits!
+   for i in range(6):
+      sender.title=str(i)
+      time.sleep(0.5)
+      
+b1.action=b1action    
+b2.action=b2action
+v.add_subview(b1)
+v.add_subview(b2)
+v.present()

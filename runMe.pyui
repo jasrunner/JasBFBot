@@ -8,23 +8,131 @@
       "border_color" : "RGBA(0.000000,0.000000,0.000000,1.000000)",
       "flex" : ""
     },
-    "frame" : "{{0, 0}, {240, 240}}",
+    "frame" : "{{0, 0}, {294, 325}}",
     "selected" : false,
     "nodes" : [
       {
         "class" : "Button",
         "attributes" : {
           "font_size" : 15,
-          "uuid" : "A57B6F8B-164E-4A46-93EC-865F74BBEA11",
+          "title" : "Start Bot",
           "flex" : "LRTB",
           "name" : "button1",
           "action" : "button_tapped",
           "class" : "Button",
           "frame" : "{{80, 104}, {80, 32}}",
-          "title" : "Tap Me!"
+          "uuid" : "A57B6F8B-164E-4A46-93EC-865F74BBEA11"
         },
-        "frame" : "{{80, 104}, {80, 32}}",
-        "selected" : true,
+        "frame" : "{{103.5, 230.5}, {100, 40}}",
+        "selected" : false,
+        "nodes" : [
+
+        ]
+      },
+      {
+        "class" : "Label",
+        "attributes" : {
+          "font_size" : 18,
+          "text" : "Balance",
+          "font_name" : "<System>",
+          "name" : "label1",
+          "class" : "Label",
+          "alignment" : "left",
+          "frame" : "{{45, 104}, {150, 32}}",
+          "uuid" : "8FB1F20E-0FBD-4C88-A124-5308645935C7"
+        },
+        "frame" : "{{30, 31}, {73, 25}}",
+        "selected" : false,
+        "nodes" : [
+
+        ]
+      },
+      {
+        "class" : "Label",
+        "attributes" : {
+          "font_size" : 18,
+          "text" : "Exposure",
+          "font_name" : "<System>",
+          "name" : "label2",
+          "class" : "Label",
+          "alignment" : "left",
+          "frame" : "{{45, 104}, {150, 32}}",
+          "uuid" : "B2A12A0C-7DDE-4E25-849D-383C97DE9918"
+        },
+        "frame" : "{{30, 81}, {76, 32}}",
+        "selected" : false,
+        "nodes" : [
+
+        ]
+      },
+      {
+        "class" : "Label",
+        "attributes" : {
+          "font_size" : 18,
+          "text" : "",
+          "font_name" : "<System>",
+          "name" : "balance",
+          "class" : "Label",
+          "alignment" : "left",
+          "frame" : "{{45, 104}, {150, 32}}",
+          "uuid" : "76B8DEA5-B173-4E03-9960-55B227724863"
+        },
+        "frame" : "{{187, 31}, {66, 32}}",
+        "selected" : false,
+        "nodes" : [
+
+        ]
+      },
+      {
+        "class" : "Label",
+        "attributes" : {
+          "font_size" : 18,
+          "text" : "",
+          "font_name" : "<System>",
+          "name" : "exposure",
+          "class" : "Label",
+          "alignment" : "left",
+          "frame" : "{{45, 104}, {150, 32}}",
+          "uuid" : "8E4D3E15-1C0A-413B-829A-1CD78E6002A2"
+        },
+        "frame" : "{{187, 82}, {66, 31}}",
+        "selected" : false,
+        "nodes" : [
+
+        ]
+      },
+      {
+        "class" : "Label",
+        "attributes" : {
+          "font_size" : 18,
+          "text" : "Number Iterations",
+          "font_name" : "<System>",
+          "name" : "label3",
+          "class" : "Label",
+          "alignment" : "left",
+          "frame" : "{{45, 139}, {150, 32}}",
+          "uuid" : "F130452F-615A-45CC-B522-9B18E0C5F2DD"
+        },
+        "frame" : "{{30, 144}, {150, 34}}",
+        "selected" : false,
+        "nodes" : [
+
+        ]
+      },
+      {
+        "class" : "Label",
+        "attributes" : {
+          "font_size" : 18,
+          "text" : "",
+          "font_name" : "<System>",
+          "name" : "iterations",
+          "class" : "Label",
+          "alignment" : "left",
+          "frame" : "{{91, 141}, {150, 32}}",
+          "uuid" : "7BE51293-73BE-4EA9-A688-3894FE580BDE"
+        },
+        "frame" : "{{188, 144}, {65, 32}}",
+        "selected" : false,
         "nodes" : [
 
         ]

@@ -199,14 +199,12 @@ def getMarketInfo( setOfEvents, marketType ) :
 	#print( 'List of ' + marketIdCount + ' markets above min volume size (' + str(foxyGlobals.minVolume) + '), ordered by volume')
 	
 	if marketIdCount == 0 :
-		print( 'Exiting as no marketIds found (getMarketInfo) ')
-		sys.exit (0)
+		print( 'Returning [] as no marketIds found (getMarketInfo) ')
+		return []
+		#sys.exit (0)
 	
 	print( 'Number of market Ids found = ' + str(marketIdCount ) )
 	return marketIdList
-	#sortedDictOfMarketObjects = sorted( dictOfMarketObjects, key=marketClass.getkeyByVolume, reverse=True ) 
-	
-	#return sortedDictOfMarketObjects
 
 	
 	

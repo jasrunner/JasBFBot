@@ -14,3 +14,5 @@ def getCurrentAccountDetails () :
 	newObject = accountClass.Account( name, available, exposure )
 	print(newObject)
 	
+	return newObject
+	

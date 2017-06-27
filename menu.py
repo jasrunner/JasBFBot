@@ -236,6 +236,8 @@ def testCorrectScore( args )	 :
 	numberIterations = args[0]
 	delay = args[1]
 	
+	counter = 0
+	
 	for _ in itertools.repeat(None, numberIterations ):
 		
 		print( 'testCorrectScore, loop ' )	
@@ -243,9 +245,10 @@ def testCorrectScore( args )	 :
 		setOfEvents = strategy.getSetOfEvents( 'Soccer' )
 		bestMarkets = strategy.callCorrectScoreQuery( setOfEvents )
 		strategy.callPlaceABet( bestMarkets )
-		print('before sleep ' + str( time.ctime(time.time())) )
+		print('Iteration: ' + str(counter) + ' before sleep ' + str( time.ctime(time.time())) )
 		time.sleep(delay)
 		print('after sleep ' + str( time.ctime(time.time())) )
+		counter += 1
 		
 	return
 	
