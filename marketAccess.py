@@ -23,7 +23,19 @@ def getInplayMarkets( queryText ) :
 		myDict [ eventId ] = event['event'] ['name']
 	
 	return myDict
+#--------------------------------------------------------
+def getWeekendMarkets( queryText, team ) :
 	
+	eventList = foxyBotLib.listWeekendEvents( queryText, team )
+	
+	myDict = {}
+	for event in eventList :
+	#	print(event)
+		eventId = event['event'] ['id']
+
+		myDict [ eventId ] = event['event'] ['name']
+	
+	return myDict
 	
 #--------------------------------------------------------
 '''

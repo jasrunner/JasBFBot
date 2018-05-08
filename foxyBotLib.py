@@ -156,7 +156,17 @@ def listEvents( queryText ) :
 
 	return listEventsLoads['result']
     
+#--------------------------------------------------------
+def listWeekendEvents( queryText, team ) :
+	params = '"filter":{"textQuery":"' + queryText + '", "marketTypeCodes": ["MATCH_ODDS"], "textQuery": "' + team + '"}'
+	
+	#print ('Calling listEvents to get list of event ids')
+	#print(list_events_req)
+	listEventsResponse = callAping( sports, "listEvents", params )
+	listEventsLoads = json.loads(listEventsResponse)
 
+	return listEventsLoads['result']
+	
 #--------------------------------------------------------
 def listMarketCatalogue( eventList, marketType ) :
 	

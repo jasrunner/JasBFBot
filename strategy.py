@@ -29,7 +29,18 @@ def getSetOfEvents(searchString) :
 	return setOfEvents
 	
 	
+#--------------------------------------------------------
+def getSetOfWeekendEvents(searchString, homeTeam, awayTeam) :
 
+	dictOfEvents = marketAccess.getWeekendMarkets( searchString, homeTeam )
+	inplayMarketCount = str(len(dictOfEvents))
+	
+	for id in dictOfEvents :
+		if awayTeam in dictOfEvents[id] :
+			return [id, dictOfEvents[id]]
+	
+	return 
+	
 #--------------------------------------------------------
 #
 def callMatchOddsQuery(setOfEvents):
