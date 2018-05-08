@@ -235,6 +235,12 @@ def matchOdds ( args ) :
 def testCorrectScore( args )	 :
 	numberIterations = args[0]
 	delay = args[1]
+	labels = args[2]
+	
+	if labels != [] :
+		balanceLabel = labels[1]
+		exposureLabel = labels[2]
+		iterationsLabel = labels[3]
 	
 	counter = 0
 	
@@ -249,6 +255,11 @@ def testCorrectScore( args )	 :
 		time.sleep(delay)
 		print('after sleep ' + str( time.ctime(time.time())) )
 		counter += 1
+		if labels != [] :
+			accountDetails = accountAccess.getCurrentAccountDetails()
+			balanceLabel.text = str(accountDetails.availableToBet)
+			exposureLabel.text = str(accountDetails.exposure)
+			iterationsLabel.text = str(counter)
 		
 	return
 	

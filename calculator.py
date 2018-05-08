@@ -5,7 +5,7 @@ from decimal import *
 # Definitions
 #--------------------------------------------------------
 
-targetROI 			= Decimal( 0.1 )
+targetROI 			= Decimal( 0.2 )
 commissionRate 	= Decimal( 0.05 )
 
 '''

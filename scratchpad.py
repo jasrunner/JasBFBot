@@ -20,25 +20,29 @@ end program
 
 import threading
 import time
+import menu
 
 exitFlag = 0
 threadLock = threading.Lock()
 threads = []
 
 class myThread (threading.Thread):
-   def __init__(self, threadID, name, counter):
+   def __init__(self, threadID, name, iterations, delay, label):
       threading.Thread.__init__(self)
       self.threadID = threadID
       self.name = name
-      self.counter = counter
+      self.iterations = iterations
+      self.delay = delay
+      self.label = label
    def run(self):
       print ("\nStarting " + self.name)
       
       # Get lock to synchronize threads
-      threadLock.acquire()
-      print_time(self.name, self.counter, 1)
+      #threadLock.acquire()
+      #print_time(self.name, self.counter, 1)
+      menu.testCorrectScore([ self.iterations, self.delay, self.label ])
       # Free lock to release next thread
-      threadLock.release()
+      #threadLock.release()
       
       print ("\nExiting " + self.name)
 
@@ -51,7 +55,7 @@ def print_time(threadName, counter, delay):
       counter -= 1
 
 
-def start() :
+def start(iterations, delay, label) :
 	
 
 	print("starting ")
@@ -60,23 +64,23 @@ def start() :
 	
 	
 	# Create new threads
-	thread1 = myThread(1, "Thread-1 ", 5)
-	thread2 = myThread(2, "Thread-2 ", 3)
+	thread1 = myThread(1, "Thread-1 ", iterations, delay, label)
+	#thread2 = myThread(2, "Thread-2 ", 3)
 	
 	# Start new Threads
 	thread1.start()
-	thread2.start()
+	#thread2.start()
 	
 	#Add threads to thread list
-	threads.append(thread1)
-	threads.append(thread2)
+	#threads.append(thread1)
+	#threads.append(thread2)
 	
 	# Wait for all threads to complete
-	for t in threads:
-	    t.join()
+	#for t in threads:
+	#    t.join()
 	
 	
-	print ("Exiting Main Thread")
+	print ("Exiting Start")
 
 
 
@@ -110,7 +114,7 @@ while 1:
    
    
 '''
-
+'''
 # coding: utf-8
 import ui, time
 v=ui.View()
@@ -134,3 +138,5 @@ b2.action=b2action
 v.add_subview(b1)
 v.add_subview(b2)
 v.present()
+'''
+
