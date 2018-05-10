@@ -65,7 +65,25 @@ def callMatchOddsQuery(setOfEvents):
 	#print(bestMarkets)
 	
 	return bestMarkets
+
+
+#--------------------------------------------------------
+# added for poolpredictor - get odds of score draws
+def getScoreDrawOdds( setOfEvents ):
 	
+	print('callCorrectScoreQuery')
+	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
+	
+	marketObjects = marketAccess.populatePrice( marketIdList, foxyGlobals.correctScore )
+	
+	print('number of marketObjects = ' + str(len(marketObjects)))
+	# now marketObjects should be populated
+	
+	for marketObject in marketObjects :	
+		print(marketObject)
+		
+	return
+
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
 # This is a soccer-only market, other market types will return 0

@@ -41,11 +41,9 @@ def getWeekendMarkets( queryText, team ) :
 '''
 	Find market ID's for the set of event ID's
 	and market type (match odds, correct score, etc)
-	Return : dictionary of {marketId : volumeTraded}
-	
-	now= returns a list of market Ids.  i.e. has converted events into market ids. 
-'''
-def getInplayMarketVols( setOfEvents, marketType ):
+	Return : list of market Ids.  i.e. has converted events into market ids. 
+
+def getMarketIds( setOfEvents, marketType ):
 	
 	# clever python makes csv creation easy ! 
 	s='","'
@@ -59,15 +57,13 @@ def getInplayMarketVols( setOfEvents, marketType ):
 	
 	marketIdList = []
 	# Extract market ID's for target events
-	myDict = {}
 	for market in marketCat :
 		marketIdList.append ( market['marketId'] )
 		
 
-	#print('market!ist. ' + str(marketList))		
 	return marketIdList
 
-
+'''
 
 #--------------------------------------------------------
 '''
@@ -193,27 +189,38 @@ def getSelections ( marketIds, marketType ):
 	
 #--------------------------------------------------------
 '''
-	common code that gets market info based on event set
-		Return list of markets ordered by volume:		
+	common code to find market ID's for the set of event ID's
+	and market type (match odds, correct score, etc)
+	Return : list of market Ids.  i.e. has converted events into market ids. 
 '''
 def getMarketInfo( setOfEvents, marketType ) :
 	
 	print('getMarketInfo')
 	
-	marketIdList = getInplayMarketVols( setOfEvents, marketType )
+	# clever python makes csv creation easy ! 
+	s='","'
+	eventString='"' + s.join(setOfEvents) + '"'
+
+	marketCat = foxyBotLib.listMarketCatalogue( eventString, marketType )
+	
+	if marketCat == 0:
+		return 0
+	
+	marketIdList = []
+	# Extract market ID's for target events
+	for market in marketCat :
+		marketIdList.append ( market['marketId'] )	
+	
 	if marketIdList == 0 :
 		print('Exiting')
 		sys.exit(0)
 	marketIdCount = len(marketIdList)
-
-		
+	
 	print('___________________')	
-	#print( 'List of ' + marketIdCount + ' markets above min volume size (' + str(foxyGlobals.minVolume) + '), ordered by volume')
 	
 	if marketIdCount == 0 :
 		print( 'Returning [] as no marketIds found (getMarketInfo) ')
 		return []
-		#sys.exit (0)
 	
 	print( 'Number of market Ids found = ' + str(marketIdCount ) )
 	return marketIdList
@@ -277,7 +284,7 @@ def populatePrice( marketIdList, marketType) :
 
 
 
-#--------------------------------------------------------
 
+	
 
 	
