@@ -37,35 +37,9 @@ def getWeekendMarkets( queryText, team ) :
 	
 	return myDict
 	
-#--------------------------------------------------------
-'''
-	Find market ID's for the set of event ID's
-	and market type (match odds, correct score, etc)
-	Return : list of market Ids.  i.e. has converted events into market ids. 
-
-def getMarketIds( setOfEvents, marketType ):
-	
-	# clever python makes csv creation easy ! 
-	s='","'
-	eventString='"' + s.join(setOfEvents) + '"'
-	
-
-	marketCat = foxyBotLib.listMarketCatalogue( eventString, marketType )
-	
-	if marketCat == 0:
-		return 0
-	
-	marketIdList = []
-	# Extract market ID's for target events
-	for market in marketCat :
-		marketIdList.append ( market['marketId'] )
-		
-
-	return marketIdList
-
-'''
 
 #--------------------------------------------------------
+
 '''
 Task 3:
 		Get back and lay prices for each market
@@ -193,9 +167,9 @@ def getSelections ( marketIds, marketType ):
 	and market type (match odds, correct score, etc)
 	Return : list of market Ids.  i.e. has converted events into market ids. 
 '''
-def getMarketInfo( setOfEvents, marketType ) :
+def getMarketIds( setOfEvents, marketType ) :
 	
-	print('getMarketInfo')
+	print('getMarketIds')
 	
 	# clever python makes csv creation easy ! 
 	s='","'
@@ -219,7 +193,7 @@ def getMarketInfo( setOfEvents, marketType ) :
 	print('___________________')	
 	
 	if marketIdCount == 0 :
-		print( 'Returning [] as no marketIds found (getMarketInfo) ')
+		print( 'Returning [] as no marketIds found (getMarketIds) ')
 		return []
 	
 	print( 'Number of market Ids found = ' + str(marketIdCount ) )

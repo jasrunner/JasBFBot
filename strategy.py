@@ -46,7 +46,7 @@ def getSetOfWeekendEvents(searchString, homeTeam, awayTeam) :
 def callMatchOddsQuery(setOfEvents):
 
 	print( 'callMatchOddsQuery' )
-	marketObjects = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.matchOdds)
+	marketObjects = marketAccess.getMarketIds(setOfEvents, foxyGlobals.matchOdds)
 	
 	if marketIdList == [] :
 		print( 'returning from callCorrectScoreQuery')
@@ -71,8 +71,8 @@ def callMatchOddsQuery(setOfEvents):
 # added for poolpredictor - get odds of score draws
 def getScoreDrawOdds( setOfEvents ):
 	
-	print('callCorrectScoreQuery')
-	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
+	print('getMarketIds')
+	marketIdList = marketAccess.getMarketIds(setOfEvents, foxyGlobals.correctScore)
 	
 	marketObjects = marketAccess.populatePrice( marketIdList, foxyGlobals.correctScore )
 	
@@ -91,7 +91,7 @@ def getScoreDrawOdds( setOfEvents ):
 def callCorrectScoreQuery( setOfEvents ):
 
 	print('callCorrectScoreQuery')
-	marketIdList = marketAccess.getMarketInfo(setOfEvents, foxyGlobals.correctScore)
+	marketIdList = marketAccess.getMarketIds(setOfEvents, foxyGlobals.correctScore)
 	
 	if marketIdList == [] :
 		print( 'returning from callCorrectScoreQuery')
