@@ -209,11 +209,11 @@ def listMarketCatalogueInPlay( queryText ) :
 def listMarketBook( marketIds ) :
 	
 	params = ' "marketIds":[ ' + marketIds + '] , "priceProjection" : {	"priceData" : [ "EX_ALL_OFFERS" ] }'	
-	print('params = ')
-	print(params)
+	#print('params = ')
+	#print(params)
 	#{"marketIds":["' + marketId + '"],"priceProjection":{"priceData":["EX_BEST_OFFERS"]}}, "id": 1}'
 	
-	print ('Calling listMarketBook to get price information')
+	#print ('Calling listMarketBook to get price information')
 	listMarketResponse = callAping( sports, "listMarketBook", params )
 	listMarketLoads = json.loads(listMarketResponse)
 	#print('___________________')

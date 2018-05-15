@@ -71,4 +71,21 @@ matchOutcome = [
 				'draw'
 ]
 
+poolsTier1 = [
+        '1-1',
+        '2-2',
+        '3-3',
+        'other draw'
+]
 
+
+poolsTier2 = [
+        '0-0'
+]
+
+
+tierWeighting1 = 1
+tierWeighting2 = 5
+tierWeighting3 = 10
+
+multiplier = 100

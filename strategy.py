@@ -80,9 +80,51 @@ def getScoreDrawOdds( setOfEvents ):
 	# now marketObjects should be populated
 	
 	for marketObject in marketObjects :	
-		print(marketObject)
+		marketObject.name = foxyBotLib.getEventNameFromMarketId( marketObject.id )
 		
-	return
+		# the lower the odds, the more likely so,ething is to happen
+		# assign:  1 * Tier1 ; 2 * Tier2 ; 3 * allElse
+		#
+		score = 0
+		for odds in marketObject.price :
+			if odds.score in foxyGlobals.poolsTier1 :
+				weighting = odds.backPrice *  foxyGlobals.tierWeighting1
+				score += weighting
+			elif odds.score in foxyGlobals.poolsTier2 :
+				weighting = odds.backPrice * foxyGlobals.tierWeighting2
+				score += weighting
+			else :
+				weighting = odds.backPrice * foxyGlobals.tierWeighting3
+				score += weighting
+				
+		marketObject.currentScore = score	
+			
+	return marketObjects
+
+#--------------------------------------------------------
+# added for poolpredictor - get odds of draw
+def getMatchOdds( setOfEvents ):
+	
+	print('getMarketIds')
+	marketIdList = marketAccess.getMarketIds(setOfEvents, foxyGlobals.matchOdds)
+	
+	marketObjects = marketAccess.populatePrice( marketIdList, foxyGlobals.matchOdds )
+	
+	print('number of marketObjects = ' + str(len(marketObjects)))
+	# now marketObjects should be populated
+	
+	for marketObject in marketObjects :	
+		marketObject.name = foxyBotLib.getEventNameFromMarketId( marketObject.id )
+		
+		
+		for odds in marketObject.price :
+			if odds.score == 'draw' :
+				marketObject.currentScore = odds.backPrice * foxyGlobals.multiplier
+		
+		#print(repr(marketObject))
+		
+	return  marketObjects
+	
 
 #--------------------------------------------------------
 # Use the event ID's to get market data, then store in a lot of Market Data objects
@@ -105,12 +147,8 @@ def callCorrectScoreQuery( setOfEvents ):
 	marketObjects = marketAccess.populatePrice( marketIdList, foxyGlobals.correctScore )
 	
 	print('number of marketObjects = ' + str(len(marketObjects)))
-	# now marketObjects should be populated
 	
-	# Limit number of markets we want to investigate
-	#counter = 0
-	#i = 0
-	#while counter < limit and i < len(marketObjects) :
+	# now marketObjects should be populated
 	for marketObject in marketObjects :	
 		
 		exclusion = ''
@@ -185,7 +223,6 @@ def callCorrectScoreQuery( setOfEvents ):
 			excludedMarkets.append( marketObject )
 			print('not viable')
 
-		#i += 1
 		
 	# this calls the __str__ version to output user info 
 	print('BestMarkets:')

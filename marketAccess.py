@@ -49,7 +49,7 @@ def getPrices ( marketId ):
 	
 	price = foxyBotLib.listMarketBook( marketId )
 	
-	print("price: " + str(price) )
+	#print("price: " + str(price) )
 	
 	#if not 
 	if not price :
@@ -63,7 +63,7 @@ def getPrices ( marketId ):
 	
 		
 	numberOfRunners = ret1['numberOfRunners']
-	print('number of runners = ' + str(numberOfRunners))
+	#print('number of runners = ' + str(numberOfRunners))
 	runners = ret1['runners']
 	for runner in runners :
 		#return marketClass.Price(getBestOdds( runner ))
@@ -101,22 +101,22 @@ def getBestOdds( runner) :
 # and returns list of marketObjects
 def getSelections ( marketIds, marketType ):
 	
-	print('getSelections')
+	#print('getSelections')
 	
 	# clever python makes csv creation easy ! 
 	s='","'
 	marketIdString='"' + s.join(marketIds) + '"'
 	
-	print('market id string = ')
-	print(marketIdString)
+	#print('market id string = ')
+	#print(marketIdString)
 	selections = foxyBotLib.listMarketBook( marketIdString )
 	#print(selections)
 	#if not 
 	if not selections :
 		print( 'no results from marketId')
 		return 
-	else:
-		print( 'getSelections= number of selections found = ' + str(len(selections ) ) )
+	#else:
+		#print( 'getSelections= number of selections found = ' + str(len(selections ) ) )
 	results = []
 	
 	# each selection maps onto a market object
@@ -213,13 +213,11 @@ def getMarketIds( setOfEvents, marketType ) :
 def populatePrice( marketIdList, marketType) :
 	
 	print('populatePrice')
-	
-	
+
 	# split here
 	
 	length = len(marketIdList)
 	
-	#if len(marketIdList) > foxyGlobals.priceRequestLimit )
 	blockSize = 5
 	count = 0
 	selections = []
@@ -240,19 +238,6 @@ def populatePrice( marketIdList, marketType) :
 	
 	
 	print('number selections = ' + str(len(selections)))
-	#print(str(selections))
-	
-	# now match each market id and populate...
-	
-	#marketObject.price = selections[1]
-	#marketObject.version = selections[0]
-
-	#marketObject.numberOfRunners = len(marketObject.price)
-	
-	# lets restrict this to just the ones we want to bet on
-	# if la-di-dah
-	#getSelections[0].name = foxyBotLib.getEventNameFromMarketId(marketObject.id)
-	# todo ! ! ! 
 
 	return selections
 
