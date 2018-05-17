@@ -84,8 +84,8 @@ poolsTier2 = [
 ]
 
 
-tierWeighting1 = 1
+tierWeighting1 = 10
 tierWeighting2 = 5
-tierWeighting3 = 10
+tierWeighting3 = 1
 
 multiplier = 100

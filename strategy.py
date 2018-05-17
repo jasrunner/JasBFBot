@@ -82,22 +82,20 @@ def getScoreDrawOdds( setOfEvents ):
 	for marketObject in marketObjects :	
 		marketObject.name = foxyBotLib.getEventNameFromMarketId( marketObject.id )
 		
-		# the lower the odds, the more likely so,ething is to happen
-		# assign:  1 * Tier1 ; 2 * Tier2 ; 3 * allElse
-		#
-		score = 0
+		tier1total = 0
+
 		for odds in marketObject.price :
+			weighting = 0
 			if odds.score in foxyGlobals.poolsTier1 :
-				weighting = odds.backPrice *  foxyGlobals.tierWeighting1
-				score += weighting
-			elif odds.score in foxyGlobals.poolsTier2 :
-				weighting = odds.backPrice * foxyGlobals.tierWeighting2
-				score += weighting
-			else :
-				weighting = odds.backPrice * foxyGlobals.tierWeighting3
-				score += weighting
+				if odds.layPrice == 0 :
+					weighting = 1 / 1000
+				else :
+					weighting = 1 / odds.layPrice 
 				
-		marketObject.currentScore = score	
+				
+				tier1total += weighting				
+			
+		marketObject.currentScore = ( tier1total * 1000 ) 
 			
 	return marketObjects
 
